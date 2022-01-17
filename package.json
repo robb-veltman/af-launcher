@@ -3,14 +3,19 @@
   "description": "AF Launcher",
   "author": "Robert Veltman",
   "homepage": "./",
-  "version": "0.1.1",
+  "version": "0.1.7",
   "private": false,
   "build": {
     "files": [
       "./build/**/*",
       "./public/electron.js",
       "node_modules/**/*"
-    ]
+    ],
+    "publish": {
+      "provider": "github",
+      "repo": "af-launcher",
+      "owner": "robb-veltman"
+    }
   },
   "dependencies": {
     "@mui/material": "^5.2.8",
