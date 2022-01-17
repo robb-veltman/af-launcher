@@ -2,10 +2,12 @@ const path = require('path');
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
+const { autoUpdater } = require('electron-updater')
 
+let win
 function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -14,6 +16,7 @@ function createWindow() {
       contextIsolation: false,
     },
   });
+  win.autoHideMenuBar = true;
 
   // and load the index.html of the app.
   // win.loadFile("index.html");
@@ -26,6 +29,10 @@ function createWindow() {
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
   }
+
+  win.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify()
+  })
 }
 
 // This method will be called when Electron has finished
@@ -48,6 +55,37 @@ app.on('activate', () => {
   }
 });
 
+// autoUpdater.on('checking-for-update', () => {
+//   win.webContents.send('AppUpdater.CheckingForUpdate')
+// })
+
+// autoUpdater.on('update-not-available', () => {
+//   win.webContents.send('AppUpdater.UpdateNotAvailable')
+// })
+
+// autoUpdater.on('update-available', () => {
+//   win.webContents.send('AppUpdater.UpdateAvailable')
+// })
+
+// autoUpdater.on('download-progress', (progressObj) => {
+//   win.webContents.send(`AppUpdater.DownloadProgress::${progressObj.percent}`)
+// })
+
+// autoUpdater.on('update-downloaded', () => {
+//   win.webContents.send('AppUpdater.UpdateDownloaded')
+// })
+
+// autoUpdater.on('error', (error) => {
+//   win.webContents.send(`AppUpdater.Error::${error}`)
+// })
+
 ipcMain.on('app_version', (event) => {
   event.sender.send('app_version', { version: app.getVersion() });
 });
+
+ipcMain.on('install_autoupdate', () => {
+  autoUpdater.quitAndInstall()
+})
+
+
+
