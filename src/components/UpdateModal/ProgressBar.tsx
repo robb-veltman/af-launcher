@@ -1,7 +1,6 @@
 import React from 'react'
 import { LinearProgress } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import { useAppContext } from 'context'
 
 const useStyles = makeStyles(theme => ({
   progressBar: {

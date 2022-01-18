@@ -50,7 +50,9 @@ function createWindow() {
     // }, 2000)
   })
 
-  mainWindow.on('show', () => mainWindow.focus())
+  mainWindow.on('show', () => {
+    mainWindow.focus()
+  })
 }
 
 // This method will be called when Electron has finished

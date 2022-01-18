@@ -4,7 +4,7 @@ import { useElectron } from 'hooks'
 import { createContextWithDefault } from 'util/reactContext'
 import { UpdateModal } from 'components/UpdateModal'
 
-type AppState =
+type AppUpdateState =
   | 'Checking'
   | 'No Updates'
   | 'Update Available'
@@ -12,7 +12,7 @@ type AppState =
   | 'Fully Updated'
 
 interface State {
-  updateState: AppState
+  updateState: AppUpdateState
   version: string
   updateDownloadPercent: number
 }
@@ -26,19 +26,21 @@ const [
 
 const AppContextProvider: React.FC = ({ children }) => {
   const { ipcRenderer } = useElectron()
-  const [updateState, setUpdateState] = useState<AppState>('Checking')
+  const [updateState, setUpdateState] = useState<AppUpdateState>('Checking')
   const [version, setVersion] = useState('')
   const [updateDownloadPercent, setUpdateDownloadPercent] = useState(0)
-  
+
   useEffect(() => {
     if (updateState === 'Update Downloaded') {
       setTimeout(() => ipcRenderer.send('App.InstallUpdate'), 1000)
-    } else if (updateState === 'No Updates') {
-      setTimeout(() => setUpdateState('Fully Updated'), 1000)
     }
   }, [updateState])
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      setUpdateState('Fully Updated')
+    }
+    
     ipcRenderer.on('App.ReceivedVersion', (event, version) => {
       ipcRenderer.removeAllListeners('App.ReceivedVersion')
       setVersion(version)
@@ -49,7 +51,9 @@ const AppContextProvider: React.FC = ({ children }) => {
       setUpdateState('Checking')
     })
     ipcRenderer.on('AppUpdater.UpdateNotAvailable', () => {
-      setTimeout(() => setUpdateState('No Updates'), 1000)
+      console.log('2')
+      setTimeout(() => setUpdateState('No Updates'), 750)
+      setTimeout(() => setUpdateState('Fully Updated'), 1500)
     })
     ipcRenderer.on('AppUpdater.UpdateAvailable', () => {
       setUpdateState('Update Available')
@@ -58,7 +62,8 @@ const AppContextProvider: React.FC = ({ children }) => {
       setUpdateDownloadPercent(percent)
     })
     ipcRenderer.on('AppUpdater.UpdateDownloaded', () => {
-      setUpdateState('Update Downloaded')
+      setUpdateDownloadPercent(100)
+      setTimeout(() => setUpdateState('Update Downloaded'), 1000)
     })
     ipcRenderer.on('AppUpdater.Error', (event, error) => {
       console.error(error)

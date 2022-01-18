@@ -33,9 +33,9 @@ interface Props {
 
 const MESSAGES = {
   'Checking': 'Checking for updates...',
-  'Update Available': 'An update to the launcher is available. It will now download automatically.',
-  'Update Downloaded': 'Update download complete. Restarting...',
-  'No Updates': 'You are up to date',
+  'Update Available': 'Downloading the latest update...',
+  'Update Downloaded': 'Download complete. Restarting...',
+  'No Updates': 'Up to date',
 }
 
 export const UpdateModal: React.FC<Props> = ({
@@ -44,11 +44,12 @@ export const UpdateModal: React.FC<Props> = ({
   const cl = useStyles()
   const { updateState, updateDownloadPercent } = useAppContext()
   const message = MESSAGES[updateState]
+  const showProgressBar = updateState === 'Update Available' || updateState === 'Update Downloaded'
   return (
     <Modal open={open} className={cl.updateModal}>
       <div className={cl.content}>
         <p>{message}</p>
-        {updateState === 'Update Available' && (
+        {showProgressBar && (
           <ProgressBar progress={updateDownloadPercent} />
         )}
       </div>
