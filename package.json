@@ -3,7 +3,7 @@
   "description": "AF Launcher",
   "author": "Robert Veltman",
   "homepage": "./",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "private": false,
   "build": {
     "appId": "com.github.robb-veltman.af-launcher",
