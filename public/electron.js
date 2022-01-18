@@ -1,6 +1,8 @@
 const path = require('path')
 
 const { app, BrowserWindow, ipcMain, Menu } = require('electron')
+// this makes it so that we don't display a menu bar, and can't do shortcuts
+// like F11 for fullscreen, ctrl+R for refresh, etc
 Menu.setApplicationMenu(false)
 
 const isDev = require('electron-is-dev')
@@ -13,10 +15,10 @@ log.info('------------------------------')
 log.info('App starting...')
 log.info('------------------------------')
 
-let win
+let mainWindow
 function createWindow() {
   // Create the browser window.
-  win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -26,21 +28,21 @@ function createWindow() {
       autoHideMenuBar: true,
     },
   })
-  win.autoHideMenuBar = true
+  mainWindow.autoHideMenuBar = true
 
   // and load the index.html of the app.
   // win.loadFile("index.html")
-  win.loadURL(
+  mainWindow.loadURL(
     isDev
       ? 'http://localhost:3000'
       : `file://${path.join(__dirname, '../build/index.html')}`
   )
   // Open the DevTools.
   if (isDev) {
-    win.webContents.openDevTools({ mode: 'detach' })
+    mainWindow.webContents.openDevTools({ mode: 'detach' })
   }
 
-  win.once('ready-to-show', () => {
+  mainWindow.once('ready-to-show', () => {
     autoUpdater.checkForUpdatesAndNotify()
     // setTimeout(() => {
     //   console.log('--------------?')
@@ -48,7 +50,7 @@ function createWindow() {
     // }, 2000)
   })
 
-  win.on('show', () => win.focus())
+  mainWindow.on('show', () => mainWindow.focus())
 }
 
 // This method will be called when Electron has finished
@@ -71,41 +73,45 @@ app.on('activate', () => {
   }
 })
 
+const sendToWindow = (eventName, ...args) => {
+  mainWindow.webContents.send(eventName, ...args)
+}
+
+// Auto updater events
 autoUpdater.on('checking-for-update', () => {
-  console.log("sending: check")
-  win.webContents.send('AppUpdater.CheckingForUpdate')
-  win.webContents.send('Test::Yo')
+  sendToWindow('AppUpdater.CheckingForUpdate')
 })
 
 autoUpdater.on('update-not-available', () => {
-  console.log("sending: not avail")
-  win.webContents.send('AppUpdater.UpdateNotAvailable')
+  sendToWindow('AppUpdater.UpdateNotAvailable')
 })
 
 autoUpdater.on('update-available', () => {
-  console.log("sending: avail")
-  win.webContents.send('AppUpdater.UpdateAvailable')
+  sendToWindow('AppUpdater.UpdateAvailable')
 })
 
 autoUpdater.on('download-progress', (progressObj) => {
-  win.webContents.send('AppUpdater.DownloadProgress', progressObj.percent)
+  sendToWindow('AppUpdater.DownloadProgress', progressObj.percent)
 })
 
 autoUpdater.on('update-downloaded', () => {
-  win.webContents.send('AppUpdater.UpdateDownloaded')
+  sendToWindow('AppUpdater.UpdateDownloaded')
 })
 
 autoUpdater.on('error', (error) => {
-  win.webContents.send(`AppUpdater.Error`, error)
+  sendToWindow(`AppUpdater.Error`, error)
 })
 
-ipcMain.on('app_version', (event) => {
-  event.sender.send('app_version', { version: app.getVersion() })
+// Other events
+ipcMain.on('App.GetVersion', (event) => {
+  const version = app.getVersion()
+  sendToWindow('App.ReceivedVersion', version)
 })
 
-ipcMain.on('install_autoupdate', () => {
+ipcMain.on('App.InstallUpdate', () => {
   autoUpdater.quitAndInstall()
 })
+
 
 
 

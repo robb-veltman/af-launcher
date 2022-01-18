@@ -1,14 +1,14 @@
 import React from 'react'
 
-import { AppUpdateContextProvider } from 'context'
+import { AppContextProvider } from 'context'
 
 import { Main } from 'components/pages'
 import { useStyles } from './style'
 
 const Providers: React.FC = ({ children }) => (
-  <AppUpdateContextProvider>
+  <AppContextProvider>
     {children}
-  </AppUpdateContextProvider>
+  </AppContextProvider>
 )
 
 export const App: React.FC = () => {

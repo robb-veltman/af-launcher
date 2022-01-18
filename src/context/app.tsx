@@ -3,36 +3,39 @@ import React, { useEffect, useState } from 'react'
 import { useElectron } from 'hooks'
 import { createContextWithDefault } from 'util/reactContext'
 
-type AppUpdateState =
+type AppState =
   | 'Checking'
   | 'No Updates'
   | 'Update Available'
-  | 'Downloaded Update'
+  | 'Update Downloaded'
 
 interface State {
-  updateState: AppUpdateState
+  updateState: AppState
+  version: string
+  installUpdate: () => void
 }
 
-type AppUpdateContextType = State
+type AppContextType = State
 
 const [
-  AppUpdateContext,
-  useAppUpdateContext
-] = createContextWithDefault<AppUpdateContextType>()
+  AppContext,
+  useAppContext
+] = createContextWithDefault<AppContextType>()
 
-const AppUpdateContextProvider: React.FC = ({ children }) => {
+const AppContextProvider: React.FC = ({ children }) => {
   const { ipcRenderer } = useElectron()
-  const [updateState, setUpdateState] = useState<AppUpdateState>('Checking')
+  const [updateState, setUpdateState] = useState<AppState>('Checking')
+  const [version, setVersion] = useState('')
   
   useEffect(() => {
     ipcRenderer.on('AppUpdater.CheckingForUpdate', () => {
       setUpdateState('Checking')
     })
 
-    // ipcRenderer.on('Test', (event, message1, message2) => {
-    //   console.log("-- received: test", message1, message2)
-    //   console.log({ event })
-    // })
+    ipcRenderer.on('App.ReceivedVersion', (event, version) => {
+      setVersion(version)
+    })
+    ipcRenderer.send('App.GetVersion')
 
     ipcRenderer.on('AppUpdater.UpdateNotAvailable', () => {
       ipcRenderer.removeAllListeners('AppUpdater.UpdateNotAvailable')
@@ -50,12 +53,14 @@ const AppUpdateContextProvider: React.FC = ({ children }) => {
 
   const state = {
     updateState,
+    version,
+    installUpdate: () => ipcRenderer.send('App.InstallUpdate')
   }
   return (
-    <AppUpdateContext.Provider value={{ ...state }}>
+    <AppContext.Provider value={{ ...state }}>
       {children}
-    </AppUpdateContext.Provider>
+    </AppContext.Provider>
   )
 }
 
-export { AppUpdateContextProvider, useAppUpdateContext }
+export { AppContextProvider, useAppContext }

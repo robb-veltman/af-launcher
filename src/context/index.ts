@@ -1,1 +1,1 @@
-export * from './appUpdate'
+export * from './app'
