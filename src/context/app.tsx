@@ -13,6 +13,7 @@ interface State {
   updateState: AppState
   version: string
   installUpdate: () => void
+  updateDownloadPercent: number
 }
 
 type AppContextType = State
@@ -26,27 +27,31 @@ const AppContextProvider: React.FC = ({ children }) => {
   const { ipcRenderer } = useElectron()
   const [updateState, setUpdateState] = useState<AppState>('Checking')
   const [version, setVersion] = useState('')
+  const [updateDownloadPercent, setUpdateDownloadPercent] = useState(0)
   
   useEffect(() => {
-    ipcRenderer.on('AppUpdater.CheckingForUpdate', () => {
-      setUpdateState('Checking')
-    })
-
     ipcRenderer.on('App.ReceivedVersion', (event, version) => {
+      ipcRenderer.removeAllListeners('App.ReceivedVersion')
       setVersion(version)
     })
     ipcRenderer.send('App.GetVersion')
 
+    ipcRenderer.on('AppUpdater.CheckingForUpdate', () => {
+      setUpdateState('Checking')
+    })
     ipcRenderer.on('AppUpdater.UpdateNotAvailable', () => {
-      ipcRenderer.removeAllListeners('AppUpdater.UpdateNotAvailable')
       setUpdateState('No Updates')
     })
     ipcRenderer.on('AppUpdater.UpdateAvailable', () => {
-      ipcRenderer.removeAllListeners('AppUpdater.UpdateAvailable')
       setUpdateState('Update Available')
     })
+    ipcRenderer.on('AppUpdater.DownloadProgress', (event, percent) => {
+      setUpdateDownloadPercent(percent)
+    })
+    ipcRenderer.on('AppUpdater.UpdateDownloaded', () => {
+      setUpdateState('Update Downloaded')
+    })
     ipcRenderer.on('AppUpdater.Error', (event, error) => {
-      ipcRenderer.removeAllListeners('AppUpdater.Error')
       console.error(error)
     })
   }, [])
@@ -54,6 +59,7 @@ const AppContextProvider: React.FC = ({ children }) => {
   const state = {
     updateState,
     version,
+    updateDownloadPercent,
     installUpdate: () => ipcRenderer.send('App.InstallUpdate')
   }
   return (

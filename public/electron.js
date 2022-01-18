@@ -109,7 +109,7 @@ ipcMain.on('App.GetVersion', (event) => {
 })
 
 ipcMain.on('App.InstallUpdate', () => {
-  autoUpdater.quitAndInstall()
+  autoUpdater.quitAndInstall(true, true)
 })
 
 
