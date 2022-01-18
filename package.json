@@ -3,7 +3,7 @@
   "description": "AF Launcher",
   "author": "Robert Veltman",
   "homepage": "./",
-  "version": "0.1.13",
+  "version": "0.1.15",
   "private": false,
   "build": {
     "appId": "com.github.robb-veltman.af-launcher",
@@ -44,8 +44,8 @@
     "eject": "react-scripts eject",
     "dev": "concurrently -k \"yarn start\" \"yarn:electron\"",
     "electron": "wait-on tcp:3000 && electron .",
-    "build-electron": "electron-builder build --win --publish never",
-    "publish": "electron-builder build --win --publish always"
+    "build-electron": "yarn build && electron-builder build --win --publish never",
+    "publish": "yarn build && electron-builder build --win --publish always"
   },
   "eslintConfig": {
     "extends": [
