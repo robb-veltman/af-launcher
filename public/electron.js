@@ -1,6 +1,8 @@
 const path = require('path')
 
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu } = require('electron')
+Menu.setApplicationMenu(false)
+
 const isDev = require('electron-is-dev')
 
 const { autoUpdater } = require('electron-updater')
@@ -40,7 +42,13 @@ function createWindow() {
 
   win.once('ready-to-show', () => {
     autoUpdater.checkForUpdatesAndNotify()
+    // setTimeout(() => {
+    //   console.log('--------------?')
+    //   win.webContents.send('Test', 'ayo', 'ayo?')
+    // }, 2000)
   })
+
+  win.on('show', () => win.focus())
 }
 
 // This method will be called when Electron has finished
@@ -66,6 +74,7 @@ app.on('activate', () => {
 autoUpdater.on('checking-for-update', () => {
   console.log("sending: check")
   win.webContents.send('AppUpdater.CheckingForUpdate')
+  win.webContents.send('Test::Yo')
 })
 
 autoUpdater.on('update-not-available', () => {
@@ -79,7 +88,7 @@ autoUpdater.on('update-available', () => {
 })
 
 autoUpdater.on('download-progress', (progressObj) => {
-  win.webContents.send(`AppUpdater.DownloadProgress::${progressObj.percent}`)
+  win.webContents.send('AppUpdater.DownloadProgress', progressObj.percent)
 })
 
 autoUpdater.on('update-downloaded', () => {
@@ -87,7 +96,7 @@ autoUpdater.on('update-downloaded', () => {
 })
 
 autoUpdater.on('error', (error) => {
-  win.webContents.send(`AppUpdater.Error`)
+  win.webContents.send(`AppUpdater.Error`, error)
 })
 
 ipcMain.on('app_version', (event) => {
