@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react'
 
 import { useElectron } from 'hooks'
 import { createContextWithDefault } from 'util/reactContext'
+import { UpdateModal } from 'components/UpdateModal'
 
 type AppState =
   | 'Checking'
   | 'No Updates'
   | 'Update Available'
   | 'Update Downloaded'
+  | 'Fully Updated'
 
 interface State {
   updateState: AppState
   version: string
-  installUpdate: () => void
   updateDownloadPercent: number
 }
 
@@ -30,6 +31,14 @@ const AppContextProvider: React.FC = ({ children }) => {
   const [updateDownloadPercent, setUpdateDownloadPercent] = useState(0)
   
   useEffect(() => {
+    if (updateState === 'Update Downloaded') {
+      setTimeout(() => ipcRenderer.send('App.InstallUpdate'), 1000)
+    } else if (updateState === 'No Updates') {
+      setTimeout(() => setUpdateState('Fully Updated'), 1000)
+    }
+  }, [updateState])
+
+  useEffect(() => {
     ipcRenderer.on('App.ReceivedVersion', (event, version) => {
       ipcRenderer.removeAllListeners('App.ReceivedVersion')
       setVersion(version)
@@ -40,7 +49,7 @@ const AppContextProvider: React.FC = ({ children }) => {
       setUpdateState('Checking')
     })
     ipcRenderer.on('AppUpdater.UpdateNotAvailable', () => {
-      setUpdateState('No Updates')
+      setTimeout(() => setUpdateState('No Updates'), 1000)
     })
     ipcRenderer.on('AppUpdater.UpdateAvailable', () => {
       setUpdateState('Update Available')
@@ -60,10 +69,11 @@ const AppContextProvider: React.FC = ({ children }) => {
     updateState,
     version,
     updateDownloadPercent,
-    installUpdate: () => ipcRenderer.send('App.InstallUpdate')
   }
+  const isUpdateModalOpen = updateState !== 'Fully Updated'
   return (
     <AppContext.Provider value={{ ...state }}>
+      <UpdateModal open={isUpdateModalOpen} />
       {children}
     </AppContext.Provider>
   )
