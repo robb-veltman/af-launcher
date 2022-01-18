@@ -1,13 +1,15 @@
-const path = require('path');
+const path = require('path')
 
-const { app, BrowserWindow, ipcMain } = require('electron');
-const isDev = require('electron-is-dev');
+const { app, BrowserWindow, ipcMain } = require('electron')
+const isDev = require('electron-is-dev')
 
 const { autoUpdater } = require('electron-updater')
-const log = require('electron-log');
+const log = require('electron-log')
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
-log.info('App starting...');
+log.info('------------------------------')
+log.info('App starting...')
+log.info('------------------------------')
 
 let win
 function createWindow() {
@@ -21,19 +23,19 @@ function createWindow() {
       contextIsolation: false,
       autoHideMenuBar: true,
     },
-  });
-  win.autoHideMenuBar = true;
+  })
+  win.autoHideMenuBar = true
 
   // and load the index.html of the app.
-  // win.loadFile("index.html");
+  // win.loadFile("index.html")
   win.loadURL(
     isDev
       ? 'http://localhost:3000'
       : `file://${path.join(__dirname, '../build/index.html')}`
-  );
+  )
   // Open the DevTools.
   if (isDev) {
-    win.webContents.openDevTools({ mode: 'detach' });
+    win.webContents.openDevTools({ mode: 'detach' })
   }
 
   win.once('ready-to-show', () => {
@@ -44,22 +46,22 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow);
+app.whenReady().then(createWindow)
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    app.quit()
   }
-});
+})
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    createWindow()
   }
-});
+})
 
 autoUpdater.on('checking-for-update', () => {
   console.log("sending: check")
@@ -89,8 +91,8 @@ autoUpdater.on('error', (error) => {
 })
 
 ipcMain.on('app_version', (event) => {
-  event.sender.send('app_version', { version: app.getVersion() });
-});
+  event.sender.send('app_version', { version: app.getVersion() })
+})
 
 ipcMain.on('install_autoupdate', () => {
   autoUpdater.quitAndInstall()

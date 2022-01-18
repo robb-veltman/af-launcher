@@ -3,8 +3,6 @@ import { useStyles } from './style'
 
 import { useElectron } from 'hooks'
 
-const { autoUpdater } = window.require('electron-updater')
-
 export const App: React.FC = () => {
   const cl = useStyles()
 
@@ -22,9 +20,6 @@ export const App: React.FC = () => {
     })
     ipcRenderer.send('app_version');
     
-    // const updateEl = document.getElementById('update')
-    // const setUpdateElText = (t: string) => updateEl!.innerText = t
-
     ipcRenderer.on('AppUpdater.CheckingForUpdate', () => {
       console.log("-- received: check")
       document.getElementById('update')!.innerText = 'Checking for update'
