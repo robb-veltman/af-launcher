@@ -2,7 +2,12 @@ const path = require('path');
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
+
 const { autoUpdater } = require('electron-updater')
+const log = require('electron-log');
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 let win
 function createWindow() {
@@ -56,29 +61,32 @@ app.on('activate', () => {
   }
 });
 
-// autoUpdater.on('checking-for-update', () => {
-//   win.webContents.send('AppUpdater.CheckingForUpdate')
-// })
+autoUpdater.on('checking-for-update', () => {
+  console.log("sending: check")
+  win.webContents.send('AppUpdater.CheckingForUpdate')
+})
 
-// autoUpdater.on('update-not-available', () => {
-//   win.webContents.send('AppUpdater.UpdateNotAvailable')
-// })
+autoUpdater.on('update-not-available', () => {
+  console.log("sending: not avail")
+  win.webContents.send('AppUpdater.UpdateNotAvailable')
+})
 
-// autoUpdater.on('update-available', () => {
-//   win.webContents.send('AppUpdater.UpdateAvailable')
-// })
+autoUpdater.on('update-available', () => {
+  console.log("sending: avail")
+  win.webContents.send('AppUpdater.UpdateAvailable')
+})
 
-// autoUpdater.on('download-progress', (progressObj) => {
-//   win.webContents.send(`AppUpdater.DownloadProgress::${progressObj.percent}`)
-// })
+autoUpdater.on('download-progress', (progressObj) => {
+  win.webContents.send(`AppUpdater.DownloadProgress::${progressObj.percent}`)
+})
 
-// autoUpdater.on('update-downloaded', () => {
-//   win.webContents.send('AppUpdater.UpdateDownloaded')
-// })
+autoUpdater.on('update-downloaded', () => {
+  win.webContents.send('AppUpdater.UpdateDownloaded')
+})
 
-// autoUpdater.on('error', (error) => {
-//   win.webContents.send(`AppUpdater.Error::${error}`)
-// })
+autoUpdater.on('error', (error) => {
+  win.webContents.send(`AppUpdater.Error`)
+})
 
 ipcMain.on('app_version', (event) => {
   event.sender.send('app_version', { version: app.getVersion() });

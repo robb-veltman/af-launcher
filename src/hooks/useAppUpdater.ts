@@ -1,29 +1,50 @@
 const updater = window.require('electron-updater')
 
-export function useAppUpdater() {
+type AppUpdaterCallback = () => void
+type DownloadProgressCallback = (percent: number) => void
+type ErrorCallback = (error: string) => void
+
+interface UseAppUpdaterArgs {
+    onCheckingForUpdate?: AppUpdaterCallback
+    onUpdateNotAvailable?: AppUpdaterCallback
+    onUpdateAvailable?: AppUpdaterCallback
+    OnDownloadProgress?: DownloadProgressCallback
+    onUpdateDownloaded?: AppUpdaterCallback
+    onError?: ErrorCallback
+}
+
+export function useAppUpdater({
+    onCheckingForUpdate,
+    onUpdateNotAvailable,
+    onUpdateAvailable,
+    OnDownloadProgress,
+    onUpdateDownloaded,
+    onError,
+}: UseAppUpdaterArgs) {
     const { autoUpdater } = updater
+
     autoUpdater.on('checking-for-update', () => {
-        console.log('AppUpdater.CheckingForUpdate')
+        onCheckingForUpdate && onCheckingForUpdate()
     })
 
     autoUpdater.on('update-not-available', () => {
-        console.log('AppUpdater.UpdateNotAvailable')
+        onUpdateNotAvailable && onUpdateNotAvailable()
     })
 
     autoUpdater.on('update-available', () => {
-        console.log('AppUpdater.UpdateAvailable')
+        onUpdateAvailable && onUpdateAvailable()
     })
 
     autoUpdater.on('download-progress', (progressObj) => {
-        console.log(`AppUpdater.DownloadProgress::${progressObj.percent}`)
+        OnDownloadProgress && OnDownloadProgress(progressObj.percent)
     })
 
     autoUpdater.on('update-downloaded', () => {
-        console.log('AppUpdater.UpdateDownloaded')
+        onUpdateDownloaded && onUpdateDownloaded()
     })
 
     autoUpdater.on('error', (error) => {
-        console.log(`AppUpdater.Error::${error}`)
+        onError && onError(error)
     })
 
 }
