@@ -21,11 +21,12 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    // frame: false,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       //enableRemoteModule: true,
       contextIsolation: false,
-      autoHideMenuBar: true,
     },
   })
   mainWindow.autoHideMenuBar = true

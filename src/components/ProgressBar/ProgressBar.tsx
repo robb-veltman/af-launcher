@@ -1,6 +1,6 @@
 import React from 'react'
-import { LinearProgress } from '@mui/material'
-import { makeStyles } from '@mui/styles'
+import cx from 'classnames'
+import { LinearProgress, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   progressBar: {
@@ -10,15 +10,17 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
   progress: number
+  className?: string
 }
 
 export const ProgressBar: React.FC<Props> = ({
   progress,
+  className,
 }) => {
   const cl = useStyles()
   return (
     <LinearProgress
-      className={cl.progressBar}
+      className={cx(cl.progressBar, className)}
       variant="determinate"
       value={progress}
     />

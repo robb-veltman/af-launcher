@@ -1,12 +1,11 @@
 import React from 'react'
-import { Modal, Theme } from '@mui/material'
-import { makeStyles } from '@mui/styles'
+import { Modal, makeStyles } from '@material-ui/core'
 
 import { useAppContext } from 'context'
 
-import { ProgressBar } from './ProgressBar'
+import { ProgressBar } from 'components/ProgressBar'
 
-export const useStyles = makeStyles((theme: Theme) => ({
+export const useStyles = makeStyles(theme => ({
   updateModal: {
     display: 'flex',
     alignItems: 'center',
