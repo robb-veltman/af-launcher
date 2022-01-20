@@ -2,6 +2,7 @@ import React from 'react'
 import { Theme, Typography, makeStyles } from '@material-ui/core'
 
 import { useAppContext } from 'context'
+import { useSettings } from 'hooks/useSettings'
 
 const useStyles = makeStyles(theme => ({
   main: {
@@ -12,6 +13,8 @@ const useStyles = makeStyles(theme => ({
 export const Main: React.FC = () => {
   const cl = useStyles()
   const { updateState, version } = useAppContext()
+  const settings = useSettings()
+  console.log({ settings })
 
   return (
     <div className={cl.main}>
