@@ -8,6 +8,10 @@ Menu.setApplicationMenu(false)
 const isDev = require('electron-is-dev')
 
 const { autoUpdater } = require('electron-updater')
+const { download } = require('electron-dl')
+const fs = require('fs')
+const DecompressZip = require('decompress-zip');
+
 const log = require('electron-log')
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -25,6 +29,7 @@ function createWindow() {
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
+      webSecurity: false,
       //enableRemoteModule: true,
       contextIsolation: false,
     },
@@ -105,10 +110,10 @@ autoUpdater.on('error', (error) => {
   sendToWindow(`AppUpdater.Error`, error)
 })
 
-// Other events
-ipcMain.on('App.GetVersion', (event) => {
+// IpcMain events
+ipcMain.on('App.Version.Request', (event) => {
   const version = app.getVersion()
-  sendToWindow('App.ReceivedVersion', version)
+  sendToWindow('App.Version.Response', version)
 })
 
 ipcMain.on('App.InstallUpdate', () => {
@@ -116,5 +121,73 @@ ipcMain.on('App.InstallUpdate', () => {
 })
 
 
+// const DIRECTORY = app.getPath('downloads') + '/AfterStrife'
+const DIRECTORY = app.getPath('downloads') + '/test-app'
 
+ipcMain.on('Game.Download.Start', async () => {
+  const directory = DIRECTORY
+  const url = 'https://afterstrife-build.nyc3.cdn.digitaloceanspaces.com/AfterStrifeClosedTest/Game.zip'
+  const filename = 'Game.zip'
+  await download(
+    mainWindow,
+    url,
+    {
+      filename,
+      directory,
+      onProgress: ({ percent }) => sendToWindow('Game.Download.Progress', { progress: percent }),
+      onCompleted: item => sendToWindow('Game.Download.Complete', { item }),
+    }
+  )
+  sendToWindow('Game.Install.Start')
+  const unzipper = new DecompressZip(DIRECTORY + '/Game.zip')
+  unzipper.on('error', (err) => {
+    console.error('extraction error:', err)
+    log.error(err)
+  })
+  unzipper.on('extract', () => {
+    sendToWindow('Game.Install.Complete')
+    log.info('done extracting')
+  })
+  unzipper.on('progress', (fileIndex, fileCount) => {
+    const progress = fileIndex / fileCount
+    sendToWindow('Game.Install.Progress', { progress })
+  })
+  unzipper.extract({
+    path: DIRECTORY + '/Game',
+    restrict: false,
+  })
+})
 
+const clearDirectory = () => {
+  const mainDirectoryContents = fs.readdirSync(DIRECTORY)
+  if (mainDirectoryContents.includes('Game.zip')) {
+    fs.unlinkSync(DIRECTORY + '/Game.zip')
+  }
+  if (mainDirectoryContents.includes('Game')) {
+    fs.rmdir(DIRECTORY + '/Game', { recursive: true }, (err) => {
+      if (err) {
+        log.error(err)
+        throw (err)
+      }
+    })
+  }
+}
+
+ipcMain.on('Game.InstallInfo.Request', () => {
+  const mainDirectoryContents = fs.readdirSync(DIRECTORY)
+
+  if (!mainDirectoryContents.includes('Game')) {
+    sendToWindow('Game.InstallInfo.Response')
+    return
+  }
+
+  const gameDirectory = DIRECTORY + '/Game'
+  const gameDirectoryContents = fs.readdirSync(gameDirectory)
+  if (!gameDirectoryContents.includes('metadata.json')) {
+    sendToWindow('Game.InstallInfo.Response')
+    return
+  }
+
+  let metadata = require(gameDirectory + '/metadata.json')
+  sendToWindow('Game.InstallInfo.Response', { metadata })
+})

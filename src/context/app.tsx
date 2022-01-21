@@ -12,9 +12,9 @@ type AppUpdateState =
   | 'Fully Updated'
 
 interface State {
-  updateState: AppUpdateState
-  version: string
-  updateDownloadPercent: number
+  appUpdateState: AppUpdateState
+  appVersion: string
+  appUpdateDownloadPercent: number
 }
 
 type AppContextType = State
@@ -26,44 +26,44 @@ const [
 
 const AppContextProvider: React.FC = ({ children }) => {
   const { ipcRenderer } = useElectron()
-  const [updateState, setUpdateState] = useState<AppUpdateState>('Checking')
-  const [version, setVersion] = useState('')
-  const [updateDownloadPercent, setUpdateDownloadPercent] = useState(0)
+  const [appUpdateState, setAppUpdateState] = useState<AppUpdateState>('Checking')
+  const [appVersion, setAppVersion] = useState('')
+  const [appUpdateDownloadPercent, setAppUpdateDownloadPercent] = useState(0)
 
   useEffect(() => {
-    if (updateState === 'Update Downloaded') {
+    if (appUpdateState === 'Update Downloaded') {
       setTimeout(() => ipcRenderer.send('App.InstallUpdate'), 1000)
     }
-  }, [updateState])
+  }, [appUpdateState])
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      setUpdateState('Fully Updated')
+      setAppUpdateState('Fully Updated')
     }
     
-    ipcRenderer.on('App.ReceivedVersion', (event, version) => {
+    ipcRenderer.on('App.Version.Response', (event, version) => {
       ipcRenderer.removeAllListeners('App.ReceivedVersion')
-      setVersion(version)
+      setAppVersion(version)
     })
-    ipcRenderer.send('App.GetVersion')
+    ipcRenderer.send('App.Version.Request')
 
     ipcRenderer.on('AppUpdater.CheckingForUpdate', () => {
-      setUpdateState('Checking')
+      setAppUpdateState('Checking')
     })
     ipcRenderer.on('AppUpdater.UpdateNotAvailable', () => {
       console.log('2')
-      setTimeout(() => setUpdateState('No Updates'), 750)
-      setTimeout(() => setUpdateState('Fully Updated'), 1500)
+      setTimeout(() => setAppUpdateState('No Updates'), 750)
+      setTimeout(() => setAppUpdateState('Fully Updated'), 1500)
     })
     ipcRenderer.on('AppUpdater.UpdateAvailable', () => {
-      setUpdateState('Update Available')
+      setAppUpdateState('Update Available')
     })
     ipcRenderer.on('AppUpdater.DownloadProgress', (event, percent) => {
-      setUpdateDownloadPercent(percent)
+      setAppUpdateDownloadPercent(percent)
     })
     ipcRenderer.on('AppUpdater.UpdateDownloaded', () => {
-      setUpdateDownloadPercent(100)
-      setTimeout(() => setUpdateState('Update Downloaded'), 1000)
+      setAppUpdateDownloadPercent(100)
+      setTimeout(() => setAppUpdateState('Update Downloaded'), 1000)
     })
     ipcRenderer.on('AppUpdater.Error', (event, error) => {
       console.error(error)
@@ -71,11 +71,11 @@ const AppContextProvider: React.FC = ({ children }) => {
   }, [])
 
   const state = {
-    updateState,
-    version,
-    updateDownloadPercent,
+    appUpdateState,
+    appVersion,
+    appUpdateDownloadPercent,
   }
-  const isUpdateModalOpen = updateState !== 'Fully Updated'
+  const isUpdateModalOpen = appUpdateState !== 'Fully Updated'
   return (
     <AppContext.Provider value={{ ...state }}>
       <UpdateModal open={isUpdateModalOpen} />

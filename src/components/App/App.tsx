@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { AppContextProvider } from 'context'
+import { AppContextProvider, GameContextProvider } from 'context'
 
 import { ThemeProvider } from 'components/Theme'
 
@@ -10,7 +10,9 @@ export const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AppContextProvider>
-        <AppLayout />
+        <GameContextProvider>
+          <AppLayout />
+        </GameContextProvider>
       </AppContextProvider>
     </ThemeProvider>
   )

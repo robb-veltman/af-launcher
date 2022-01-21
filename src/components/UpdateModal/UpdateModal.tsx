@@ -41,7 +41,7 @@ export const UpdateModal: React.FC<Props> = ({
   open,
 }) => {
   const cl = useStyles()
-  const { updateState, updateDownloadPercent } = useAppContext()
+  const { appUpdateState: updateState, appUpdateDownloadPercent: updateDownloadPercent } = useAppContext()
   const message = MESSAGES[updateState]
   const showProgressBar = updateState === 'Update Available' || updateState === 'Update Downloaded'
   return (
