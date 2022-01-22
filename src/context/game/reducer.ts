@@ -13,10 +13,10 @@ export type Action =
 export const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.tag) {
     case 'Install.Check': {
-      return { ...state, installState: 'Checking' }
+      return { ...state, updateState: 'Checking' }
     }
     case 'Install.Download.Start': {
-      return { ...state, installState: 'Downloading' }
+      return { ...state, updateState: 'Downloading' }
     }
     case 'Install.Download.Progress': {
       return { ...state, installProgress: action.progress }
@@ -25,13 +25,13 @@ export const reducer: Reducer<State, Action> = (state, action) => {
       return { ...state, downloadProgress: 1 }
     }
     case 'Install.Install.Start': {
-      return { ...state, installState: 'Installing' }
+      return { ...state, updateState: 'Installing' }
     }
     case 'Install.Install.Progress': {
       return { ...state, installProgress: action.progress }
     }
     case 'Install.Install.Complete': {
-      return { ...state, installProgress: 1, installState: 'Up To Date' }
+      return { ...state, installProgress: 1, updateState: 'Up To Date' }
     }
     default:
       return state

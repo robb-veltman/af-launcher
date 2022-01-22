@@ -13,8 +13,8 @@ const useStyles = makeStyles(theme => ({
 
 export const Main: React.FC = () => {
   const cl = useStyles()
-  const { appUpdateState, appVersion } = useAppContext()
-  const { installState, installProgress, downloadProgress } = useGameContext()
+  const { updateState: appUpdateState, version: appVersion } = useAppContext()
+  const { updateState: gameUpdateState, installProgress, downloadProgress } = useGameContext()
   const { ipcRenderer } = useElectron()
   const onClickTestBtn = () => {
     ipcRenderer.send('Game.Download.Start')
@@ -29,7 +29,7 @@ export const Main: React.FC = () => {
         App State: {appUpdateState}
       </Typography>
       <Typography variant="body1" color="textPrimary">
-        Install State: {installState}
+        Install State: {gameUpdateState}
       </Typography>
       <Typography variant="body1" color="textPrimary">
         Game Download Progress: {downloadProgress}

@@ -1,7 +1,7 @@
 
 import { GameMetadata } from 'types'
 
-export type GameInstallState =
+export type GameUpdateState =
   | 'Loading'
   | 'Checking'
   | 'Downloading'
@@ -9,8 +9,8 @@ export type GameInstallState =
   | 'Up To Date'
 
 export interface State {
-  installState: GameInstallState
   metadata?: GameMetadata
+  updateState: GameUpdateState
   downloadProgress: number
   installProgress: number
 }

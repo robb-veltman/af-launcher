@@ -49,7 +49,8 @@ function createWindow() {
   }
 
   mainWindow.once('ready-to-show', () => {
-    autoUpdater.checkForUpdatesAndNotify()
+    // autoUpdater.checkForUpdatesAndNotify()
+    
     // setTimeout(() => {
     //   console.log('--------------?')
     //   win.webContents.send('Test', 'ayo', 'ayo?')
@@ -86,6 +87,10 @@ const sendToWindow = (eventName, ...args) => {
 }
 
 // Auto updater events
+ipcMain.on('App.CheckForUpdate', () => {
+  autoUpdater.checkForUpdatesAndNotify()
+})
+
 autoUpdater.on('checking-for-update', () => {
   sendToWindow('AppUpdater.CheckingForUpdate')
 })
@@ -99,7 +104,7 @@ autoUpdater.on('update-available', () => {
 })
 
 autoUpdater.on('download-progress', (progressObj) => {
-  sendToWindow('AppUpdater.DownloadProgress', progressObj.percent)
+  sendToWindow('AppUpdater.DownloadProgress', { progress: progressObj.percent })
 })
 
 autoUpdater.on('update-downloaded', () => {
@@ -107,10 +112,10 @@ autoUpdater.on('update-downloaded', () => {
 })
 
 autoUpdater.on('error', (error) => {
-  sendToWindow(`AppUpdater.Error`, error)
+  sendToWindow(`AppUpdater.Error`, { error })
 })
 
-// IpcMain events
+// app events
 ipcMain.on('App.Version.Request', (event) => {
   const version = app.getVersion()
   sendToWindow('App.Version.Response', { version })

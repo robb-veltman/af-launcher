@@ -41,7 +41,7 @@ export const UpdateModal: React.FC<Props> = ({
   open,
 }) => {
   const cl = useStyles()
-  const { appUpdateState: updateState, appUpdateDownloadPercent: updateDownloadPercent } = useAppContext()
+  const { updateState, downloadProgress } = useAppContext()
   const message = MESSAGES[updateState]
   const showProgressBar = updateState === 'Update Available' || updateState === 'Update Downloaded'
   return (
@@ -49,7 +49,7 @@ export const UpdateModal: React.FC<Props> = ({
       <div className={cl.content}>
         <p>{message}</p>
         {showProgressBar && (
-          <ProgressBar progress={updateDownloadPercent} />
+          <ProgressBar progress={downloadProgress} />
         )}
       </div>
     </Modal>

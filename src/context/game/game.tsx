@@ -20,11 +20,11 @@ const [
 ] = createContextWithDefault<GameContextType>()
 
 const GameContextProvider: React.FC = ({ children }) => {
-  const { appUpdateState } = useAppContext()
+  const { updateState: appUpdateState } = useAppContext()
   const [metadata, setMetadata] = useState<GameMetadata>()
 
   const [state, dispatch] = useReducer(reducer, {
-    installState: 'Loading',
+    updateState: 'Loading',
     installProgress: 0,
     downloadProgress: 0,
   })
@@ -41,7 +41,7 @@ const GameContextProvider: React.FC = ({ children }) => {
   })
 
   useEffect(() => {
-    if (appUpdateState !== 'Fully Updated' || state.installState !== 'Loading') return
+    if (appUpdateState !== 'Fully Updated' || state.updateState !== 'Loading') return
     (async () => {
       dispatch({ tag: 'Install.Check' })
 
@@ -65,7 +65,7 @@ const GameContextProvider: React.FC = ({ children }) => {
         downloadAndInstallGame()
       }
     })()
-  }, [appUpdateState, state.installState])
+  }, [appUpdateState, state.updateState])
 
   return (
     <GameContext.Provider value={{ ...state, metadata, dispatch }}>
