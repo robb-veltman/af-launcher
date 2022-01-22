@@ -53,6 +53,10 @@ export function useAppAPI() {
     ipcRenderer.send('App.Minimize')
   }
 
+  const maximize = () => {
+    ipcRenderer.send('App.Maximize')
+  }
+
   const close = () => {
     ipcRenderer.send('App.Close')
   }
@@ -61,6 +65,7 @@ export function useAppAPI() {
     fetchVersion,
     checkForUpdate,
     minimize,
+    maximize,
     close,
   }
 }

@@ -8,6 +8,8 @@ import { GameUpdateState } from 'context/game/types'
 const useStyles = makeStyles(theme => ({
   download: {
     padding: theme.spacing(2),
+    background: theme.palette.bg.light,
+    height: '100%',
   },
   playBtn: {
     marginBottom: theme.spacing(2),

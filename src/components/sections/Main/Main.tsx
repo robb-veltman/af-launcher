@@ -7,6 +7,8 @@ import { useElectron } from 'hooks'
 const useStyles = makeStyles(theme => ({
   main: {
     padding: theme.spacing(2),
+    background: theme.palette.bg.light,
+    height: '100%',
   },
 }))
 

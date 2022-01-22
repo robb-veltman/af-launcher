@@ -26,9 +26,11 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    minWidth: 600,
+    minHeight: 450,
     frame: false,
     autoHideMenuBar: true,
-    resizable: false,
+    // resizable: false,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
@@ -127,6 +129,14 @@ ipcMain.on('App.InstallUpdate', () => {
 
 ipcMain.on('App.Minimize', () => {
   mainWindow.minimize()
+})
+
+ipcMain.on('App.Maximize', () => {
+  if (mainWindow.isMaximized()) {
+    mainWindow.restore()
+  } else {
+    mainWindow.maximize()
+  }
 })
 
 ipcMain.on('App.Close', () => {

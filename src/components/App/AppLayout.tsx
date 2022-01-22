@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core'
 
+import { MenuBar } from 'components/MenuBar'
 import { Main, Download } from 'components/sections'
 
 export const useStyles = makeStyles(theme => ({
@@ -8,18 +9,17 @@ export const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: theme.spacing(2),
+    padding: theme.spacing(0, 0, 2, 0),
     height: '100vh',
     backgroundColor: theme.palette.bg.main,
   },
   appTop: {
     flexGrow: 3,
-    background: theme.palette.bg.light,
     width: '100%',
-    marginBottom: theme.spacing(2),
+    padding: theme.spacing(1, 2, 2, 2),
   },
   appBottom: {
-    background: theme.palette.bg.light,
+    padding: theme.spacing(0, 2),
     width: '100%',
     flexGrow: 1,
   }
@@ -29,6 +29,7 @@ export const AppLayout: React.FC = () => {
   const cl = useStyles()
   return (
     <div className={cl.appWrapper}>
+      <MenuBar />
       <main className={cl.appTop}>
         <Main />
       </main>
