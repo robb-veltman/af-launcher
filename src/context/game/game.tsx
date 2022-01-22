@@ -41,7 +41,7 @@ const GameContextProvider: React.FC = ({ children }) => {
   })
 
   useEffect(() => {
-    if (appUpdateState !== 'Fully Updated' || state.updateState !== 'Loading') return
+    if (appUpdateState !== 'Up To Date' || state.updateState !== 'Loading') return
     (async () => {
       dispatch({ tag: 'Install.Check' })
 

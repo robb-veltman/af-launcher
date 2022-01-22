@@ -3,7 +3,6 @@ import { Typography, makeStyles } from '@material-ui/core'
 
 import { useAppContext, useGameContext } from 'context'
 import { useElectron } from 'hooks'
-import { ProgressBar } from 'components/ProgressBar'
 
 const useStyles = makeStyles(theme => ({
   main: {
@@ -14,36 +13,41 @@ const useStyles = makeStyles(theme => ({
 export const Main: React.FC = () => {
   const cl = useStyles()
   const { updateState: appUpdateState, version: appVersion } = useAppContext()
-  const { updateState: gameUpdateState, installProgress, downloadProgress } = useGameContext()
+  const { updateState: gameUpdateState, metadata } = useGameContext()
   const { ipcRenderer } = useElectron()
   const onClickTestBtn = () => {
-    ipcRenderer.send('Game.Download.Start')
+    // ipcRenderer.send('Game.Download.Start')
     // ipcRenderer.send('Game.InstallInfo.Request')
+    // ipcRenderer.send('Game.Start')
+    // ipcRenderer.send('App.Minimize')
+    ipcRenderer.send('App.Close')
   }
   const [n, setN] = useState(0)
+  const isDev = process.env.NODE_ENV === 'development'
   return (
     <div className={cl.main}>
-      <button onClick={onClickTestBtn}>test button</button>
-      <button onClick={() => setN(n + 1)}>force render update</button>
-      <Typography variant="body1" color="textPrimary">
+      {isDev && (
+        <>
+          <button onClick={onClickTestBtn}>Test Button</button>
+          <button onClick={() => setN(n + 1)}>Force Render</button>
+        </>
+      )}
+      <Typography variant="body2" color="textPrimary">
         App State: {appUpdateState}
       </Typography>
-      <Typography variant="body1" color="textPrimary">
-        Install State: {gameUpdateState}
+      <Typography variant="body2" color="textPrimary">
+        App Version: {appVersion}
       </Typography>
-      <Typography variant="body1" color="textPrimary">
-        Game Download Progress: {downloadProgress}
+      <Typography variant="body2" color="textPrimary">
+        App Environment: {process.env.NODE_ENV}
       </Typography>
-      <Typography variant="body1" color="textPrimary">
-        Game Install Progress: {installProgress}
+      <br />
+      <Typography variant="body2" color="textPrimary">
+        Game State: {gameUpdateState}
       </Typography>
-      <Typography variant="body1" color="textPrimary">
-        Version: {appVersion}
+      <Typography variant="body2" color="textPrimary">
+        Game Version: {metadata?.version}
       </Typography>
-      <Typography variant="body1" color="textPrimary">
-        Env: {process.env.NODE_ENV}
-      </Typography>
-      <ProgressBar progress={downloadProgress * 100} />
     </div>
   );
 }

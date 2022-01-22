@@ -49,7 +49,7 @@ export const UpdateModal: React.FC<Props> = ({
       <div className={cl.content}>
         <p>{message}</p>
         {showProgressBar && (
-          <ProgressBar progress={downloadProgress} />
+          <ProgressBar value={downloadProgress} />
         )}
       </div>
     </Modal>

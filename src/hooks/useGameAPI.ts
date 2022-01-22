@@ -48,9 +48,14 @@ export function useGameAPI() {
     ipcRenderer.send('Game.Download.Start')
   }
 
+  const startGame = () => {
+    ipcRenderer.send('Game.Start')
+  }
+
   return {
     fetchLocalMetadata,
     fetchServerMetadata,
     startDownload,
+    startGame,
   }
 }

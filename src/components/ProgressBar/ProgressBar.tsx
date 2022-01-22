@@ -1,6 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import { LinearProgress, makeStyles } from '@material-ui/core'
+import { LinearProgress, LinearProgressProps, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   progressBar: {
@@ -8,21 +8,22 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface Props {
-  progress: number
-  className?: string
+interface Props extends LinearProgressProps {
+  
 }
 
 export const ProgressBar: React.FC<Props> = ({
-  progress,
   className,
+  value,
+  ...rest
 }) => {
   const cl = useStyles()
   return (
     <LinearProgress
       className={cx(cl.progressBar, className)}
       variant="determinate"
-      value={progress}
+      value={value}
+      {...rest}
     />
   )
 }

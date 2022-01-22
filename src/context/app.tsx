@@ -9,7 +9,7 @@ type AppUpdateState =
   | 'No Updates'
   | 'Update Available'
   | 'Update Downloaded'
-  | 'Fully Updated'
+  | 'Up To Date'
 
 interface State {
   updateState: AppUpdateState
@@ -42,14 +42,14 @@ const AppContextProvider: React.FC = ({ children }) => {
       const version = await appAPI.fetchVersion()
       setVersion(version)
       if (process.env.NODE_ENV === 'development') {
-        setUpdateState('Fully Updated')
+        setUpdateState('Up To Date')
         return
       }
       setUpdateState('Checking')
       appAPI.checkForUpdate({
         onUpdateNotAvailable: () => {
           setTimeout(() => setUpdateState('No Updates'), 750)
-          setTimeout(() => setUpdateState('Fully Updated'), 1500)
+          setTimeout(() => setUpdateState('Up To Date'), 1500)
         },
         onUpdateAvailable: () => setUpdateState('Update Available'),
         onDownloadProgress: setDownloadProgress,
@@ -66,7 +66,7 @@ const AppContextProvider: React.FC = ({ children }) => {
     version,
     downloadProgress,
   }
-  const isUpdateModalOpen = updateState !== 'Fully Updated'
+  const isUpdateModalOpen = updateState !== 'Up To Date'
   return (
     <AppContext.Provider value={{ ...state }}>
       <UpdateModal open={isUpdateModalOpen} />

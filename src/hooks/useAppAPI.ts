@@ -49,8 +49,18 @@ export function useAppAPI() {
     ipcRenderer.send('App.CheckForUpdate')
   }
 
+  const minimize = () => {
+    ipcRenderer.send('App.Minimize')
+  }
+
+  const close = () => {
+    ipcRenderer.send('App.Close')
+  }
+
   return {
     fetchVersion,
     checkForUpdate,
+    minimize,
+    close,
   }
 }

@@ -1,4 +1,5 @@
 const path = require('path')
+const execFile = require('child_process').execFile
 
 const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 // this makes it so that we don't display a menu bar, and can't do shortcuts
@@ -25,8 +26,9 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    // frame: false,
+    frame: false,
     autoHideMenuBar: true,
+    resizable: false,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
@@ -49,8 +51,6 @@ function createWindow() {
   }
 
   mainWindow.once('ready-to-show', () => {
-    // autoUpdater.checkForUpdatesAndNotify()
-    
     // setTimeout(() => {
     //   console.log('--------------?')
     //   win.webContents.send('Test', 'ayo', 'ayo?')
@@ -86,7 +86,7 @@ const sendToWindow = (eventName, ...args) => {
   mainWindow.webContents.send(eventName, ...args)
 }
 
-// Auto updater events
+// app updater events
 ipcMain.on('App.CheckForUpdate', () => {
   autoUpdater.checkForUpdatesAndNotify()
 })
@@ -125,13 +125,22 @@ ipcMain.on('App.InstallUpdate', () => {
   autoUpdater.quitAndInstall(true, true)
 })
 
+ipcMain.on('App.Minimize', () => {
+  mainWindow.minimize()
+})
+
+ipcMain.on('App.Close', () => {
+  mainWindow.close()
+})
+
+// game events
 const clearDirectoryContents = () => {
-  const mainDirectoryContents = fs.readdirSync(DIRECTORY)
+  const mainDirectoryContents = fs.readdirSync(_dir)
   if (mainDirectoryContents.includes('Game.zip')) {
-    fs.unlinkSync(DIRECTORY + '/Game.zip')
+    fs.unlinkSync(_dir + '/Game.zip')
   }
   if (mainDirectoryContents.includes('Game')) {
-    fs.rmdir(DIRECTORY + '/Game', { recursive: true }, (err) => {
+    fs.rmdir(_dir + '/Game', { recursive: true }, (err) => {
       if (err) {
         log.error(err)
         throw (err)
@@ -141,11 +150,18 @@ const clearDirectoryContents = () => {
 }
 
 // const DIRECTORY = app.getPath('downloads') + '/AfterStrife'
-const DIRECTORY = app.getPath('downloads') + '/test-app'
+const _dir = app.getPath('downloads') + '/test-app'
+
+ipcMain.on('Game.Start', () => {
+  const exePath = _dir + '/Game/AfterStrife.exe'
+  execFile(exePath, (error, data) => {
+    if (error) console.error('Execute file error:', error)
+    if (data) console.log('Execute file data:', data)
+  })
+})
 
 ipcMain.on('Game.Download.Start', async () => {
   clearDirectoryContents()
-  const directory = DIRECTORY
   const url = 'https://afterstrife-build.nyc3.cdn.digitaloceanspaces.com/AfterStrifeClosedTest/Game.zip'
   const filename = 'Game.zip'
   await download(
@@ -153,13 +169,13 @@ ipcMain.on('Game.Download.Start', async () => {
     url,
     {
       filename,
-      directory,
+      directory: _dir,
       onProgress: ({ percent }) => sendToWindow('Game.Download.Progress', { progress: percent }),
       onCompleted: item => sendToWindow('Game.Download.Complete', { item }),
     }
   )
   sendToWindow('Game.Install.Start')
-  const unzipper = new DecompressZip(DIRECTORY + '/Game.zip')
+  const unzipper = new DecompressZip(_dir + '/Game.zip')
   unzipper.on('error', (err) => {
     console.error('extraction error:', err)
     log.error(err)
@@ -173,20 +189,20 @@ ipcMain.on('Game.Download.Start', async () => {
     sendToWindow('Game.Install.Progress', { progress })
   })
   unzipper.extract({
-    path: DIRECTORY + '/Game',
+    path: _dir + '/Game',
     restrict: false,
   })
 })
 
 ipcMain.on('Game.InstallInfo.Request', () => {
-  const mainDirectoryContents = fs.readdirSync(DIRECTORY)
+  const mainDirectoryContents = fs.readdirSync(_dir)
 
   if (!mainDirectoryContents.includes('Game')) {
     sendToWindow('Game.InstallInfo.Response')
     return
   }
 
-  const gameDirectory = DIRECTORY + '/Game'
+  const gameDirectory = _dir + '/Game'
   const gameDirectoryContents = fs.readdirSync(gameDirectory)
   if (!gameDirectoryContents.includes('metadata.json')) {
     sendToWindow('Game.InstallInfo.Response')

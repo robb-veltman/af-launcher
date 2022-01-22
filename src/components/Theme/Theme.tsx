@@ -28,7 +28,7 @@ export const theme = createTheme({
       bright: '#424242',
     },
     text: {
-      primary: 'white',
+      primary: '#fff',
       secondary: '#9E97F7',
     },
   },
