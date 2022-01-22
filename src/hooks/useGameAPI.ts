@@ -1,5 +1,5 @@
 import { GameMetadata } from 'types'
-import { useElectron } from './useElectron'
+import { useElectron } from 'hooks/useElectron'
 
 const METADATA_URL =
   'https://afterstrife-build.nyc3.cdn.digitaloceanspaces.com/AfterStrifeClosedTest/metadata.json'

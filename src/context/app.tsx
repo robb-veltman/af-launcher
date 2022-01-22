@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { useElectron } from 'hooks'
+import { useElectron, useAppAPI } from 'hooks'
 import { createContextWithDefault } from 'util/reactContext'
 import { UpdateModal } from 'components/UpdateModal'
 
@@ -26,6 +26,7 @@ const [
 
 const AppContextProvider: React.FC = ({ children }) => {
   const { ipcRenderer } = useElectron()
+  const appAPI = useAppAPI()
   const [appUpdateState, setAppUpdateState] = useState<AppUpdateState>('Checking')
   const [appVersion, setAppVersion] = useState('')
   const [appUpdateDownloadPercent, setAppUpdateDownloadPercent] = useState(0)
@@ -41,17 +42,12 @@ const AppContextProvider: React.FC = ({ children }) => {
       setAppUpdateState('Fully Updated')
     }
     
-    ipcRenderer.on('App.Version.Response', (event, version) => {
-      ipcRenderer.removeAllListeners('App.ReceivedVersion')
-      setAppVersion(version)
-    })
-    ipcRenderer.send('App.Version.Request')
+    appAPI.fetchVersion().then(setAppVersion)
 
     ipcRenderer.on('AppUpdater.CheckingForUpdate', () => {
       setAppUpdateState('Checking')
     })
     ipcRenderer.on('AppUpdater.UpdateNotAvailable', () => {
-      console.log('2')
       setTimeout(() => setAppUpdateState('No Updates'), 750)
       setTimeout(() => setAppUpdateState('Fully Updated'), 1500)
     })

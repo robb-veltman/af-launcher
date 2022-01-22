@@ -26,3 +26,7 @@ yarn-error.log*
 
 electron-builder.yml
 *.lnk
+
+game.zip
+Game.zip
+metadata.json

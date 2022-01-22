@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { Theme, Typography, makeStyles } from '@material-ui/core'
+import React, {  useState } from 'react'
+import { Typography, makeStyles } from '@material-ui/core'
 
 import { useAppContext, useGameContext } from 'context'
-import { useSettings } from 'hooks/useSettings'
 import { useElectron } from 'hooks'
+import { ProgressBar } from 'components/ProgressBar'
 
 const useStyles = makeStyles(theme => ({
   main: {
@@ -43,6 +43,7 @@ export const Main: React.FC = () => {
       <Typography variant="body1" color="textPrimary">
         Env: {process.env.NODE_ENV}
       </Typography>
+      <ProgressBar progress={downloadProgress * 100} />
     </div>
   );
 }

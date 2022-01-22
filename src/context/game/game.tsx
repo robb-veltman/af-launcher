@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import compareVersions from 'compare-versions'
 
 import { GameMetadata } from 'types'
@@ -6,10 +6,13 @@ import { useGameAPI } from 'hooks'
 import { createContextWithDefault } from 'util/reactContext'
 
 import { useAppContext } from '../app'
-import { GameInstallState, State } from './types'
+import { State } from './types'
+import { Action, reducer } from './reducer'
 
 
-type GameContextType = State
+interface GameContextType extends State {
+  dispatch: React.Dispatch<Action>
+}
 
 const [
   GameContext,
@@ -18,30 +21,29 @@ const [
 
 const GameContextProvider: React.FC = ({ children }) => {
   const { appUpdateState } = useAppContext()
-  const [installState, setInstallState] = useState<GameInstallState>('Loading')
   const [metadata, setMetadata] = useState<GameMetadata>()
-  const [downloadProgress, setDownloadProgress] = useState(0)
-  const [installProgress, setInstallProgress] = useState(0)
+
+  const [state, dispatch] = useReducer(reducer, {
+    installState: 'Loading',
+    installProgress: 0,
+    downloadProgress: 0,
+  })
 
   const gameAPI = useGameAPI()
 
   const downloadAndInstallGame = () => gameAPI.startDownload({
-    onDownloadStart: () => setInstallState('Downloading'),
-    onDownloadProgress: setDownloadProgress,
-    onDownloadComplete: () => setDownloadProgress(1),
-    onInstallStart: () => setInstallState('Installing'),
-    onInstallProgress: setInstallProgress,
-    onInstallComplete: () => {
-      setInstallState('Up To Date')
-      setInstallProgress(1)
-    },
+    onDownloadStart: () => dispatch({ tag: 'Install.Download.Start' }),
+    onDownloadProgress: progress => dispatch({ tag: 'Install.Download.Progress', progress }),
+    onDownloadComplete: () => dispatch({ tag: 'Install.Download.Complete' }),
+    onInstallStart: () => dispatch({ tag: 'Install.Install.Start' }),
+    onInstallProgress: progress => dispatch({ tag: 'Install.Install.Progress', progress }),
+    onInstallComplete: () => dispatch({ tag: 'Install.Install.Complete' }),
   })
 
-  // fetch local metadata; if not found, start game download & install
   useEffect(() => {
-    if (appUpdateState !== 'Fully Updated' || installState !== 'Loading') return
+    if (appUpdateState !== 'Fully Updated' || state.installState !== 'Loading') return
     (async () => {
-      setInstallState('Checking')
+      dispatch({ tag: 'Install.Check' })
 
       const localMetadata = await gameAPI.fetchLocalMetadata()
       if (!localMetadata) {
@@ -54,23 +56,19 @@ const GameContextProvider: React.FC = ({ children }) => {
       const versionCompare = compareVersions(localMetadata.version, serverMetadata.version)
       console.log('VERSION COMPARE:', versionCompare)
       if (versionCompare === 0) {
-        setInstallState('Up To Date')
+        dispatch({ tag: 'Install.Install.Complete' })
       } else if (versionCompare === -1) {
         downloadAndInstallGame()
       } else {
-        // if we somehow got a version AHEAD (should delete and re-install)
+        // if we somehow got a version AHEAD of the server, we fully delete & re-install
+        // (currently, this is the default functionality, so we just repeat it here for now)
+        downloadAndInstallGame()
       }
     })()
-  }, [appUpdateState, installState])
+  }, [appUpdateState, state.installState])
 
-  const state = {
-    installState,
-    metadata,
-    downloadProgress,
-    installProgress,
-  }
   return (
-    <GameContext.Provider value={{ ...state }}>
+    <GameContext.Provider value={{ ...state, metadata, dispatch }}>
       {children}
     </GameContext.Provider>
   )

@@ -113,18 +113,33 @@ autoUpdater.on('error', (error) => {
 // IpcMain events
 ipcMain.on('App.Version.Request', (event) => {
   const version = app.getVersion()
-  sendToWindow('App.Version.Response', version)
+  sendToWindow('App.Version.Response', { version })
 })
 
 ipcMain.on('App.InstallUpdate', () => {
   autoUpdater.quitAndInstall(true, true)
 })
 
+const clearDirectoryContents = () => {
+  const mainDirectoryContents = fs.readdirSync(DIRECTORY)
+  if (mainDirectoryContents.includes('Game.zip')) {
+    fs.unlinkSync(DIRECTORY + '/Game.zip')
+  }
+  if (mainDirectoryContents.includes('Game')) {
+    fs.rmdir(DIRECTORY + '/Game', { recursive: true }, (err) => {
+      if (err) {
+        log.error(err)
+        throw (err)
+      }
+    })
+  }
+}
 
 // const DIRECTORY = app.getPath('downloads') + '/AfterStrife'
 const DIRECTORY = app.getPath('downloads') + '/test-app'
 
 ipcMain.on('Game.Download.Start', async () => {
+  clearDirectoryContents()
   const directory = DIRECTORY
   const url = 'https://afterstrife-build.nyc3.cdn.digitaloceanspaces.com/AfterStrifeClosedTest/Game.zip'
   const filename = 'Game.zip'
@@ -157,21 +172,6 @@ ipcMain.on('Game.Download.Start', async () => {
     restrict: false,
   })
 })
-
-const clearDirectory = () => {
-  const mainDirectoryContents = fs.readdirSync(DIRECTORY)
-  if (mainDirectoryContents.includes('Game.zip')) {
-    fs.unlinkSync(DIRECTORY + '/Game.zip')
-  }
-  if (mainDirectoryContents.includes('Game')) {
-    fs.rmdir(DIRECTORY + '/Game', { recursive: true }, (err) => {
-      if (err) {
-        log.error(err)
-        throw (err)
-      }
-    })
-  }
-}
 
 ipcMain.on('Game.InstallInfo.Request', () => {
   const mainDirectoryContents = fs.readdirSync(DIRECTORY)
