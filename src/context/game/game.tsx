@@ -45,13 +45,14 @@ const GameContextProvider: React.FC = ({ children }) => {
     (async () => {
       dispatch({ tag: 'Install.Check' })
 
+      const serverMetadata = await gameAPI.fetchServerMetadata()
+      setMetadata(serverMetadata)
+      
       const localMetadata = await gameAPI.fetchLocalMetadata()
       if (!localMetadata) {
         downloadAndInstallGame()
         return
       }
-      const serverMetadata = await gameAPI.fetchServerMetadata()
-      setMetadata(serverMetadata)
 
       const versionCompare = compareVersions(localMetadata.version, serverMetadata.version)
       console.log('VERSION COMPARE:', versionCompare)

@@ -30,15 +30,18 @@ export function useAppAPI() {
       // do we really need anything here?
     })
     ipcRenderer.on('AppUpdater.UpdateNotAvailable', () => {
+      ipcRenderer.removeAllListeners('AppUpdater.UpdateNotAvailable')
       onUpdateNotAvailable()
     })
     ipcRenderer.on('AppUpdater.UpdateAvailable', () => {
+      ipcRenderer.removeAllListeners('AppUpdater.UpdateAvailable')
       onUpdateAvailable()
     })
     ipcRenderer.on('AppUpdater.DownloadProgress', (event, { progress }) => {
       onDownloadProgress(progress)
     })
     ipcRenderer.on('AppUpdater.UpdateDownloaded', () => {
+      ipcRenderer.removeAllListeners('AppUpdater.UpdateDownloaded')
       onDownloadComplete()
     })
     ipcRenderer.on('AppUpdater.Error', (event, { error }) => {

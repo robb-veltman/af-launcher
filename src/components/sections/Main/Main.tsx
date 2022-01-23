@@ -50,6 +50,13 @@ export const Main: React.FC = () => {
       <Typography variant="body2" color="textPrimary">
         Game Version: {metadata?.version}
       </Typography>
+      <br />
+      <Typography variant="body2" color="textPrimary">
+        {metadata?.name}
+      </Typography>
+      <Typography variant="body2" color="textPrimary">
+        © {metadata?.company} 2022
+      </Typography>
     </div>
   );
 }

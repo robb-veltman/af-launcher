@@ -19,7 +19,7 @@ export const reducer: Reducer<State, Action> = (state, action) => {
       return { ...state, updateState: 'Downloading' }
     }
     case 'Install.Download.Progress': {
-      return { ...state, installProgress: action.progress }
+      return { ...state, downloadProgress: action.progress }
     }
     case 'Install.Download.Complete': {
       return { ...state, downloadProgress: 1 }

@@ -39,11 +39,24 @@ export function useGameAPI() {
     onInstallComplete,
   }: StartDownloadArgs) => {
     onDownloadStart()
-    ipcRenderer.on('Game.Download.Progress', (e, { progress }) => onDownloadProgress(progress))
-    ipcRenderer.on('Game.Download.Complete', () => onDownloadComplete && onDownloadComplete())
-    ipcRenderer.on('Game.Install.Start', onInstallStart)
-    ipcRenderer.on('Game.Install.Progress', (e, { progress }) => onInstallProgress(progress))
-    ipcRenderer.on('Game.Install.Complete', onInstallComplete)
+    ipcRenderer.on('Game.Download.Progress', (e, { progress }) => {
+      onDownloadProgress(progress)
+    })
+    ipcRenderer.on('Game.Download.Complete', () => {
+      ipcRenderer.removeAllListeners('Game.Download.Complete')
+      onDownloadComplete && onDownloadComplete()
+    })
+    ipcRenderer.on('Game.Install.Start', () => {
+      ipcRenderer.removeAllListeners('Game.Install.Start')
+      onInstallStart()
+    })
+    ipcRenderer.on('Game.Install.Progress', (e, { progress }) => {
+      onInstallProgress(progress)
+    })
+    ipcRenderer.on('Game.Install.Complete', () => {
+      ipcRenderer.removeAllListeners('Game.Install.Complete')
+      onInstallComplete()
+    })
 
     ipcRenderer.send('Game.Download.Start')
   }

@@ -143,12 +143,22 @@ ipcMain.on('App.Close', () => {
   mainWindow.close()
 })
 
+
+const _baseDir = app.getPath('appData')
+if (!fs.readdirSync(_baseDir).includes('AfterStrife')) {
+  fs.mkdir(_baseDir + '/AfterStrife', err => {
+    if (err) {
+      console.error(err)
+      log.error(err)
+    }
+  })
+}
+
+const _dir = _baseDir + '/AfterStrife'
+
 // game events
-const clearDirectoryContents = () => {
+const clearDirectoryContents = async () => {
   const mainDirectoryContents = fs.readdirSync(_dir)
-  if (mainDirectoryContents.includes('Game.zip')) {
-    fs.unlinkSync(_dir + '/Game.zip')
-  }
   if (mainDirectoryContents.includes('Game')) {
     fs.rmdir(_dir + '/Game', { recursive: true }, (err) => {
       if (err) {
@@ -159,9 +169,6 @@ const clearDirectoryContents = () => {
   }
 }
 
-// const DIRECTORY = app.getPath('downloads') + '/AfterStrife'
-const _dir = app.getPath('downloads') + '/test-app'
-
 ipcMain.on('Game.Start', () => {
   const exePath = _dir + '/Game/AfterStrife.exe'
   execFile(exePath, (error, data) => {
@@ -171,7 +178,7 @@ ipcMain.on('Game.Start', () => {
 })
 
 ipcMain.on('Game.Download.Start', async () => {
-  clearDirectoryContents()
+  await clearDirectoryContents()
   const url = 'https://afterstrife-build.nyc3.cdn.digitaloceanspaces.com/AfterStrifeClosedTest/Game.zip'
   const filename = 'Game.zip'
   await download(
@@ -191,6 +198,10 @@ ipcMain.on('Game.Download.Start', async () => {
     log.error(err)
   })
   unzipper.on('extract', () => {
+    const mainDirectoryContents = fs.readdirSync(_dir)
+    if (mainDirectoryContents.includes('Game.zip')) {
+      fs.unlinkSync(_dir + '/Game.zip')
+    }
     sendToWindow('Game.Install.Complete')
     log.info('done extracting')
   })
@@ -203,6 +214,7 @@ ipcMain.on('Game.Download.Start', async () => {
     restrict: false,
   })
 })
+
 
 ipcMain.on('Game.InstallInfo.Request', () => {
   const mainDirectoryContents = fs.readdirSync(_dir)

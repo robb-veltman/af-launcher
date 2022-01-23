@@ -14,14 +14,13 @@ export const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.bg.main,
   },
   appTop: {
-    flexGrow: 3,
+    flexGrow: 1,
     width: '100%',
     padding: theme.spacing(1, 2, 2, 2),
   },
   appBottom: {
     padding: theme.spacing(0, 2),
     width: '100%',
-    flexGrow: 1,
   }
 }))
 
