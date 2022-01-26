@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 export const Main: React.FC = () => {
   const cl = useStyles()
   const { updateState: appUpdateState, version: appVersion } = useAppContext()
-  const { updateState: gameUpdateState, metadata } = useGameContext()
+  const { updateState: gameUpdateState, metadata, testError } = useGameContext()
   const { ipcRenderer } = useElectron()
   const onClickTestBtn = () => {
     // ipcRenderer.send('Game.Download.Start')
@@ -56,6 +56,11 @@ export const Main: React.FC = () => {
       </Typography>
       <Typography variant="body2" color="textPrimary">
         © {metadata?.company} 2022
+      </Typography>
+      <br />
+      <br />
+      <Typography variant="body2" style={{ color: 'red' }}>
+        {testError}
       </Typography>
     </div>
   );
