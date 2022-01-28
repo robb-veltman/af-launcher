@@ -145,7 +145,7 @@ ipcMain.on('App.Close', () => {
 })
 
 
-const _baseDir = app.getPath('downloads')
+const _baseDir = app.getPath('appData')
 
 if (!fs.readdirSync(_baseDir).includes('AfterStrife')) {
   fs.mkdir(_baseDir + '/AfterStrife', err => {
