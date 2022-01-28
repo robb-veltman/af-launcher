@@ -10,7 +10,6 @@ const isDev = require('electron-is-dev')
 
 const { autoUpdater } = require('electron-updater')
 const { download } = require('electron-dl')
-const DownloadManager = require("electron-download-manager")
 const fs = require('fs')
 const DecompressZip = require('decompress-zip');
 
@@ -147,6 +146,7 @@ ipcMain.on('App.Close', () => {
 
 const _baseDir = app.getPath('appData')
 
+// create AfterStrife/ directory, if not already present
 if (!fs.readdirSync(_baseDir).includes('AfterStrife')) {
   fs.mkdir(_baseDir + '/AfterStrife', err => {
     if (err) {
@@ -157,6 +157,15 @@ if (!fs.readdirSync(_baseDir).includes('AfterStrife')) {
 }
 
 const _dir = _baseDir + '/AfterStrife'
+
+const deleteZipFile = () => {
+  const mainDirectoryContents = fs.readdirSync(_dir)
+  if (mainDirectoryContents.includes('Game.zip')) {
+    fs.unlinkSync(_dir + '/Game.zip')
+  }
+}
+
+deleteZipFile()
 
 // game events
 const clearDirectoryContents = async () => {
@@ -179,94 +188,49 @@ ipcMain.on('Game.Start', () => {
   })
 })
 
-DownloadManager.register({
-  downloadFolder: _baseDir + '/AfterStrife',
-})
-
 ipcMain.on('Game.Download.Start', async () => {
   await clearDirectoryContents()
   const url = 'https://afterstrife-build.nyc3.cdn.digitaloceanspaces.com/AfterStrifeClosedTest/Game.zip'
-  // const filename = 'Game.zip'
+  const filename = 'Game.zip'
   try {
-    DownloadManager.download({
+    await download(
+      mainWindow,
       url,
-      // filename,
-      // directory: _dir,
-      onProgress: ({ progress }) => sendToWindow('Game.Download.Progress', { progress: progress / 100 }),
-    }, (error, info) => {
-      if (error) {
-        sendToWindow('Game.Download.Error', ({ error }))
-        console.error('asdf', error)
-        log.error(error)
+      {
+        filename,
+        directory: _dir,
+        onProgress: ({ percent }) => sendToWindow('Game.Download.Progress', { progress: percent }),
+        onCompleted: item => sendToWindow('Game.Download.Complete', { item }),
+        onCancel: item => sendToWindow('Game.Download.Cancel', item)
       }
+    )
 
-      console.log('Finished downloading: ' + info.url + ' at ' + info.filepath)
-      log.info('Finished downloading: ' + info.url + ' at ' + info.filepath)
-      sendToWindow('Game.Download.Complete')
+    sendToWindow('Game.Install.Start')
+    log.info('Game download complete. Starting Unzip...')
 
-      sendToWindow('Game.Install.Start')
-      const unzipper = new DecompressZip(_dir + '/Game.zip')
-      unzipper.on('error', (err) => {
-        console.error('extraction error:', err)
-        log.error(err)
-      })
-      unzipper.on('extract', () => {
-        const mainDirectoryContents = fs.readdirSync(_dir)
-        if (mainDirectoryContents.includes('Game.zip')) {
-          fs.unlinkSync(_dir + '/Game.zip')
-        }
-        sendToWindow('Game.Install.Complete')
-        log.info('done extracting')
-      })
-      unzipper.on('progress', (fileIndex, fileCount) => {
-        const progress = fileIndex / fileCount
-        sendToWindow('Game.Install.Progress', { progress })
-      })
-      unzipper.extract({
-        path: _dir + '/Game',
-        restrict: false,
-      })
+    const unzipper = new DecompressZip(_dir + '/Game.zip')
+    unzipper.on('error', (err) => {
+      console.error('extraction error:', err)
+      log.error(err)
     })
-    // await download(
-    //   mainWindow,
-    //   url,
-    //   {
-    //     filename,
-    //     directory: _dir,
-    //     onProgress: ({ percent }) => sendToWindow('Game.Download.Progress', { progress: percent }),
-    //     onCompleted: item => sendToWindow('Game.Download.Complete', { item }),
-    //     onCancel: item => sendToWindow('Game.Download.Cancel', item)
-    //   }
-    // )
-
-    // sendToWindow('Game.Install.Start')
-    // const unzipper = new DecompressZip(_dir + '/Game.zip')
-    // unzipper.on('error', (err) => {
-    //   console.error('extraction error:', err)
-    //   log.error(err)
-    // })
-    // unzipper.on('extract', () => {
-    //   const mainDirectoryContents = fs.readdirSync(_dir)
-    //   if (mainDirectoryContents.includes('Game.zip')) {
-    //     fs.unlinkSync(_dir + '/Game.zip')
-    //   }
-    //   sendToWindow('Game.Install.Complete')
-    //   log.info('done extracting')
-    // })
-    // unzipper.on('progress', (fileIndex, fileCount) => {
-    //   const progress = fileIndex / fileCount
-    //   sendToWindow('Game.Install.Progress', { progress })
-    // })
-    // unzipper.extract({
-    //   path: _dir + '/Game',
-    //   restrict: false,
-    // })
+    unzipper.on('extract', () => {
+      deleteZipFile()
+      sendToWindow('Game.Install.Complete')
+      log.info('Game unzip complete.')
+    })
+    unzipper.on('progress', (fileIndex, fileCount) => {
+      const progress = fileIndex / fileCount
+      sendToWindow('Game.Install.Progress', { progress })
+    })
+    unzipper.extract({
+      path: _dir + '/Game',
+      restrict: false,
+    })
   } catch(e) {
     console.error(e)
     sendToWindow('Game.GeneralError', e)
   }
 })
-
 
 ipcMain.on('Game.InstallInfo.Request', () => {
   const mainDirectoryContents = fs.readdirSync(_dir)

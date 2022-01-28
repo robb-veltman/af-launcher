@@ -13,7 +13,6 @@ interface StartDownloadArgs {
   onDownloadStart: () => void
   onDownloadProgress: (progress: number) => void
   onDownloadComplete?: () => void
-  onDownloadError?: (error: any) => void
   onInstallStart: () => void
   onInstallProgress: (progress: number) => void
   onInstallComplete: () => void
@@ -42,7 +41,6 @@ export function useGameAPI() {
     onDownloadStart,
     onDownloadProgress,
     onDownloadComplete,
-    onDownloadError,
     onInstallStart,
     onInstallProgress,
     onInstallComplete,
@@ -54,9 +52,6 @@ export function useGameAPI() {
     ipcRenderer.on('Game.Download.Complete', () => {
       ipcRenderer.removeAllListeners('Game.Download.Complete')
       onDownloadComplete && onDownloadComplete()
-    })
-    ipcRenderer.on('Game.Download.Error', (e, { error }) => {
-      onDownloadError && onDownloadError(error)
     })
     ipcRenderer.on('Game.Install.Start', () => {
       ipcRenderer.removeAllListeners('Game.Install.Start')

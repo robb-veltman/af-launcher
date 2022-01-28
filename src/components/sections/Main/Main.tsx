@@ -16,7 +16,6 @@ export const Main: React.FC = () => {
   const cl = useStyles()
   const { updateState: appUpdateState, version: appVersion } = useAppContext()
   const { updateState: gameUpdateState, metadata, reinstallGame } = useGameContext()
-  const gameAPI = useGameAPI()
   const { ipcRenderer } = useElectron()
   const onClickTestBtn = () => {
     // ipcRenderer.send('Game.Download.Start')
