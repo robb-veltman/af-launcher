@@ -1,18 +1,19 @@
 import { GameMetadata } from 'types'
 import { useElectron } from 'hooks/useElectron'
+import { useGameContext } from 'context'
 
 // this cached version is messed up. it doesn't properly clear?
-// const METADATA_URL =
-//   'https://afterstrife-build.nyc3.cdn.digitaloceanspaces.com/AfterStrifeClosedTest/metadata.json'
-
 const METADATA_URL =
-  'https://afterstrife-build.nyc3.digitaloceanspaces.com/AfterStrifeClosedTest/metadata.json'
+  'https://afterstrife-build.nyc3.cdn.digitaloceanspaces.com/AfterStrifeClosedTest/metadata.json'
+
+// const METADATA_URL =
+//   'https://afterstrife-build.nyc3.digitaloceanspaces.com/AfterStrifeClosedTest/metadata.json'
 
 interface StartDownloadArgs {
   onDownloadStart: () => void
   onDownloadProgress: (progress: number) => void
   onDownloadComplete?: () => void
-  onDownloadCancel?: (item: any) => void
+  onDownloadError?: (error: any) => void
   onInstallStart: () => void
   onInstallProgress: (progress: number) => void
   onInstallComplete: () => void
@@ -20,6 +21,8 @@ interface StartDownloadArgs {
 
 export function useGameAPI() {
   const { ipcRenderer } = useElectron()
+  // const { dispatch } = useGameContext()
+  // console.log('dispatch:', dispatch)
 
   const fetchLocalMetadata = () => new Promise<GameMetadata>((resolve, reject) => {
     ipcRenderer.on('Game.InstallInfo.Response', (event, data) => {
@@ -39,7 +42,7 @@ export function useGameAPI() {
     onDownloadStart,
     onDownloadProgress,
     onDownloadComplete,
-    onDownloadCancel,
+    onDownloadError,
     onInstallStart,
     onInstallProgress,
     onInstallComplete,
@@ -51,6 +54,9 @@ export function useGameAPI() {
     ipcRenderer.on('Game.Download.Complete', () => {
       ipcRenderer.removeAllListeners('Game.Download.Complete')
       onDownloadComplete && onDownloadComplete()
+    })
+    ipcRenderer.on('Game.Download.Error', (e, { error }) => {
+      onDownloadError && onDownloadError(error)
     })
     ipcRenderer.on('Game.Install.Start', () => {
       ipcRenderer.removeAllListeners('Game.Install.Start')

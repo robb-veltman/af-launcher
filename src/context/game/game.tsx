@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useState } from 'react'
 import compareVersions from 'compare-versions'
 
 import { GameMetadata } from 'types'
-import { useElectron, useGameAPI } from 'hooks'
+import { useGameAPI } from 'hooks'
 import { createContextWithDefault } from 'util/reactContext'
 
 import { useAppContext } from '../app'
@@ -12,7 +12,7 @@ import { Action, reducer } from './reducer'
 
 interface GameContextType extends State {
   dispatch: React.Dispatch<Action>
-  testError: string
+  reinstallGame: () => void
 }
 
 const [
@@ -32,28 +32,19 @@ const GameContextProvider: React.FC = ({ children }) => {
 
   const gameAPI = useGameAPI()
 
-  // test error handling
-  const [testError, setTestError] = useState('no error')
-
   const downloadAndInstallGame = () => gameAPI.startDownload({
     onDownloadStart: () => dispatch({ tag: 'Install.Download.Start' }),
     onDownloadProgress: progress => dispatch({ tag: 'Install.Download.Progress', progress }),
     onDownloadComplete: () => dispatch({ tag: 'Install.Download.Complete' }),
-    onDownloadCancel: item => {
-      setTestError(testError + ' | ' + JSON.stringify(item))
-    },
     onInstallStart: () => dispatch({ tag: 'Install.Install.Start' }),
     onInstallProgress: progress => dispatch({ tag: 'Install.Install.Progress', progress }),
     onInstallComplete: () => dispatch({ tag: 'Install.Install.Complete' }),
   })
 
-  // test error handling
-  const { ipcRenderer } = useElectron()
-  useEffect(() => {
-    ipcRenderer.on('Game.GeneralError', (e) => {
-      setTestError(testError + ' | ' + e)
-    })
-  }, [])
+  const reinstallGame = () => {
+    dispatch({ tag: 'Install.Reinstall' })
+    downloadAndInstallGame()
+  }
 
   useEffect(() => {
     if (appUpdateState !== 'Up To Date' || state.updateState !== 'Loading') return
@@ -86,7 +77,7 @@ const GameContextProvider: React.FC = ({ children }) => {
   }, [appUpdateState, state.updateState])
 
   return (
-    <GameContext.Provider value={{ ...state, metadata, dispatch, testError }}>
+    <GameContext.Provider value={{ ...state, metadata, dispatch, reinstallGame }}>
       {children}
     </GameContext.Provider>
   )

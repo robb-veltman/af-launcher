@@ -9,6 +9,7 @@ export type Action =
   | { tag: 'Install.Install.Start' }
   | { tag: 'Install.Install.Progress', progress: number }
   | { tag: 'Install.Install.Complete' }
+  | { tag: 'Install.Reinstall'}
 
 export const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.tag) {
@@ -32,6 +33,14 @@ export const reducer: Reducer<State, Action> = (state, action) => {
     }
     case 'Install.Install.Complete': {
       return { ...state, installProgress: 1, updateState: 'Up To Date' }
+    }
+    case 'Install.Reinstall': {
+      return {
+        ...state,
+        installProgress: 0,
+        downloadProgress: 0,
+        updateState: 'Checking',
+      }
     }
     default:
       return state
