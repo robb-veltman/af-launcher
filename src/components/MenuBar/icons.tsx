@@ -1,10 +1,12 @@
 import React from 'react'
 import Icon from '@mdi/react'
+import { Settings } from '@material-ui/icons'
 import {
   mdiWindowMinimize,
   mdiWindowMaximize,
   mdiWindowRestore,
   mdiWindowClose,
+  mdiCog,
 } from '@mdi/js'
 
 export const ICONS = {
@@ -35,5 +37,12 @@ export const ICONS = {
       color="white"
       size={0.8}
     />
-  )
+  ),
+  settings: (
+    <Icon
+      path={mdiCog}
+      color="white"
+      size={0.8}
+    />
+  ),
 }

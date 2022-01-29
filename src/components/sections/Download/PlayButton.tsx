@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Typography, makeStyles } from '@material-ui/core'
+import { Button, Typography, makeStyles, IconButton } from '@material-ui/core'
 import { useGameAPI } from 'hooks'
 import { useGameContext } from 'context'
 import { GameUpdateState } from 'context/game/types'
@@ -36,6 +36,14 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'black',
     position: 'absolute',
     top: '-36px',
+  },
+  options: {
+    display: 'flex',
+    background: 'red',
+    borderRadius: 0,
+    width: '30px',
+    color: 'white',
+    backgroundColor: theme.palette.primary.main,
   },
 }))
 

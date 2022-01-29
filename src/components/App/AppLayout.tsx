@@ -9,6 +9,7 @@ import bgSource from 'assets/images/bg.png'
 
 export const useStyles = makeStyles(theme => ({
   appWrapper: {
+    borderRadius: '8px',
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',

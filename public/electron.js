@@ -31,6 +31,8 @@ function createWindow() {
     // minWidth: 600,
     // minHeight: 375,
     frame: false,
+    transparent: true,
+    roundedCorners: true,
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,

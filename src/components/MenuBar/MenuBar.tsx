@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { IconButton, makeStyles } from '@material-ui/core'
+import { IconButton, makeStyles, Menu, MenuItem, Typography } from '@material-ui/core'
 import { useAppAPI } from 'hooks'
 
 import { ICONS } from './icons'
+import { useGameContext } from 'context'
 
 const useStyles = makeStyles(theme => ({
   menuBar: {
+    zIndex: 1,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -35,6 +37,21 @@ const useStyles = makeStyles(theme => ({
   btnIcon: {
     fontSize: 20,
   },
+  settingsMenuList: {
+    // padding: '0',
+  },
+  settingsMenuPaper: {
+    background: theme.palette.primary.dark,
+    borderRadius: 5,
+    minWidth: '120px',
+    zIndex: -1,
+  },
+  settingsMenuItem: {
+    '&:hover': {
+      background: theme.palette.primary.dark,
+      filter: 'brightness(1.2)',
+    },
+  },
 }))
 
 export const MenuBar: React.FC = () => {
@@ -45,6 +62,16 @@ export const MenuBar: React.FC = () => {
     setIsMaximized(!isMaximized)
     maximize()
   }
+  const [settingsAnchorEl, setSettingsAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const onClickSettings = (e: React.MouseEvent<HTMLButtonElement>) =>
+    setSettingsAnchorEl(e.currentTarget)
+  const onSettingsMenuClose = () => setSettingsAnchorEl(null)
+  const { reinstallGame, updateState } = useGameContext()
+  const onClickReinstall = () => {
+    onSettingsMenuClose()
+    reinstallGame()
+  }
+
   return (
     <section className={cl.menuBar}>
       <div className={cl.draggable} />
@@ -52,6 +79,28 @@ export const MenuBar: React.FC = () => {
         <IconButton className={cl.btn} disableRipple onClick={minimize}>
           {ICONS.minimize}
         </IconButton>
+        <IconButton className={cl.btn} disableRipple onClick={onClickSettings}>
+          {ICONS.settings}
+        </IconButton>
+        <Menu
+          anchorEl={settingsAnchorEl}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          classes={{ paper: cl.settingsMenuPaper, list: cl.settingsMenuList }}
+          getContentAnchorEl={null}
+          onClose={onSettingsMenuClose}
+          open={!!settingsAnchorEl}
+        >
+          <MenuItem
+            className={cl.settingsMenuItem}
+            onClick={onClickReinstall}
+            disableRipple
+            disabled={updateState !== 'Up To Date'}
+          >
+            <Typography variant="body1">
+              Reinstall
+            </Typography>
+          </MenuItem>
+        </Menu>
         {/* <IconButton className={cl.btn} disableRipple onClick={onClickMaximize}>
           {isMaximized ? ICONS.maximizeRestore : ICONS.maximize }
         </IconButton> */}
