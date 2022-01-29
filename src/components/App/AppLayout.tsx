@@ -16,15 +16,25 @@ export const useStyles = makeStyles(theme => ({
     backgroundImage: `url(${bgSource})`,
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
+    position: 'relative',
+    '&::after': {
+      position: 'absolute',
+      content: `' '`,
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(42,14,57,0.25) 100%)',
+    }
   },
   appTop: {
     flexGrow: 1,
     width: '100%',
     padding: theme.spacing(0, 2, 0, 2),
+    zIndex: 1,
   },
   appBottom: {
     width: '100%',
     padding: theme.spacing(0, 2),
+    zIndex: 1,
   }
 }))
 

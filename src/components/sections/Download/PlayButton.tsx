@@ -58,7 +58,7 @@ export const PlayButton: React.FC = () => {
         {label}
       </Typography>
       <Button
-        // disabled={updateState !== 'Up To Date' || installProgress < 1}
+        disabled={updateState !== 'Up To Date' || installProgress < 1}
         onClick={gameApi.startGame}
         className={cl.playBtn}
         variant="contained"

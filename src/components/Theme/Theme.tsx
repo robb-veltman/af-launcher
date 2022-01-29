@@ -42,15 +42,6 @@ export const theme = createTheme({
   },
 })
 
-// export const theme = createTheme({
-//   palette: {
-//     type: 'dark',
-//     primary: {
-//       main: 'rgba(0, 255, 0, 1)',
-//     }
-//   },
-// })
-
 export const ThemeProvider: React.FC = ({ children }) => (
   <MuiThemeProvider theme={theme}>
     {children}

@@ -21,7 +21,7 @@ export const NewsTab: React.FC = () => {
       <Typography variant="h5" color="textPrimary" className={cl.header}>
         Launcher Info
       </Typography>
-      <Typography variant="body2" color="textPrimary">
+      <Typography variant="body1" color="textPrimary">
         State: {appUpdateState}
         <br />
         Version: {appVersion}
@@ -32,7 +32,7 @@ export const NewsTab: React.FC = () => {
       <Typography variant="h5" color="textPrimary" className={cl.header}>
         Game Info
       </Typography>
-      <Typography variant="body2" color="textPrimary">
+      <Typography variant="body1" color="textPrimary">
         {metadata?.name}
         <br />
         State: {gameUpdateState}

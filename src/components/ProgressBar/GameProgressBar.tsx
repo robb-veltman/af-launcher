@@ -28,7 +28,7 @@ export const GameProgressBar: React.FC<GameProgressBarProps> = ({
   return (
     <ProgressBar
       className={cx(cl.bar, className)}
-      value={50}
+      value={value}
       {...rest}
     />
   )

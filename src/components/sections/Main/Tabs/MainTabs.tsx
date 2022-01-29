@@ -7,7 +7,9 @@ import { PatchNotesTab } from './PatchNotesTab'
 
 const useStyles = makeStyles(theme => ({
   tabsContainer: {
-    backgroundColor: theme.palette.primary.dark,
+    // backgroundColor: theme.palette.primary.dark,
+    background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(42,14,57,1) 100%)',
+    borderRadius: '10px',
     '& .indicator': {
       display: 'flex',
       justifyContent: 'center',
@@ -21,14 +23,16 @@ const useStyles = makeStyles(theme => ({
     }
   },
   tabList: {
-
+    
   },
   tab: {
     color: theme.palette.secondary.main,
     fontFamily: 'InformaPro',
     fontSize: '18px',
+    padding: 0,
   },
   tabPanel: {
+    padding: theme.spacing(2, 3),
     overflowY: 'scroll',
     height: '50vh',
 
