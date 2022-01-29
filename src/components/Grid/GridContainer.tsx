@@ -15,8 +15,8 @@ export const GridContainer: React.FC<IProps> = ({
   className,
   ...rest
 }) => (
-  <Container maxWidth={false} className={className}>
-    <Grid container {...rest} style={{ height: '100%' }}>
+  <Container maxWidth={false} className={className} {...rest}>
+    <Grid container style={{ height: '100%' }}>
       {children}
     </Grid>
   </Container>

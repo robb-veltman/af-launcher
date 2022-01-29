@@ -7,15 +7,21 @@ import { GameUpdateState } from 'context/game/types'
 
 const useStyles = makeStyles(theme => ({
   download: {
-    padding: theme.spacing(2),
-    background: theme.palette.bg.light,
+    display: 'flex',
+    alignItems: 'center',
     height: '100%',
   },
-  playBtn: {
-    marginBottom: theme.spacing(2),
+  progress: {
+    fontFamily: 'Nove',
+    fontSize: '28px',
+    marginRight: theme.spacing(1),
   },
   progressBar: {
-    height: 25,
+    height: 15,
+    marginRight: theme.spacing(2),
+  },
+  playBtn: {
+    marginRight: theme.spacing(4),
   },
 }))
 
@@ -64,6 +70,13 @@ export const Download: React.FC = () => {
 
   return (
     <div className={cl.download}>
+      <Typography className={cl.progress} color="textPrimary">
+        {Math.round(progress * 100)}%
+      </Typography>
+      <ProgressBar value={progress * 100} className={cl.progressBar} />
+      {/* <Typography variant="body1" color="textPrimary">
+        {label}
+      </Typography> */}
       <Button
         disableElevation
         size="large"
@@ -74,10 +87,6 @@ export const Download: React.FC = () => {
       >
         PLAY
       </Button>
-      <ProgressBar value={progress * 100} className={cl.progressBar} />
-      <Typography variant="body1" color="textPrimary">
-        {label}
-      </Typography>
     </div>  
   )
 }

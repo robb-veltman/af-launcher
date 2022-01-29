@@ -1,14 +1,23 @@
 import React, {  useState } from 'react'
-import { Typography, makeStyles } from '@material-ui/core'
+import { Typography, makeStyles, Grid } from '@material-ui/core'
 
 import { useAppContext, useGameContext } from 'context'
-import { useElectron, useGameAPI } from 'hooks'
+import { useElectron } from 'hooks'
+import { MainTabs } from './Tabs'
+import { GridContainer } from 'components/Grid'
 
 const useStyles = makeStyles(theme => ({
   main: {
-    padding: theme.spacing(2),
-    background: theme.palette.bg.light,
+    padding: theme.spacing(0, 2, 2, 2),
+    background: theme.palette.primary.main,
     height: '100%',
+  },
+
+  title: {
+    fontFamily: 'Nove',
+    fontSize: '20vh',
+    marginBottom: '-20px',
+    marginLeft: '-48px',
   },
 }))
 
@@ -28,7 +37,18 @@ export const Main: React.FC = () => {
   const isDev = process.env.NODE_ENV === 'development'
   return (
     <div className={cl.main}>
-      {isDev && (
+      <GridContainer spacing={3} style={{ height: '100%' }}>
+        {/* <Grid item xs={1} /> */}
+        <Grid item xs={8}>
+          <Typography variant="h1" color="textPrimary" className={cl.title}>
+            AFTERSTRIFE
+          </Typography>
+          <MainTabs />
+        </Grid>
+        <Grid item xs={4} />
+      </GridContainer>
+      
+      {/* {isDev && (
         <>
           <button onClick={onClickTestBtn}>Test Button</button>
           <button onClick={() => setN(n + 1)}>Force Render</button>
@@ -37,10 +57,10 @@ export const Main: React.FC = () => {
       <button onClick={reinstallGame}>
         Reinstall
       </button>
-      <Typography variant="body2" color="textPrimary">
+      <Typography variant="body2" color="textPrimary" className={cl.t1}>
         App State: {appUpdateState}
       </Typography>
-      <Typography variant="body2" color="textPrimary">
+      <Typography variant="body2" color="textPrimary" className={cl.t2}>
         App Version: {appVersion}
       </Typography>
       <Typography variant="body2" color="textPrimary">
@@ -59,7 +79,7 @@ export const Main: React.FC = () => {
       </Typography>
       <Typography variant="body2" color="textPrimary">
         © {metadata?.company} 2022
-      </Typography>
+      </Typography> */}
     </div>
   );
 }

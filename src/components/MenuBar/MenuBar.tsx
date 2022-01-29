@@ -11,7 +11,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     width: '100%',
-    backgroundColor: theme.palette.bg.main,
   },
   draggable: {
     '-webkit-app-region': 'drag',
@@ -53,9 +52,9 @@ export const MenuBar: React.FC = () => {
         <IconButton className={cl.btn} disableRipple onClick={minimize}>
           {ICONS.minimize}
         </IconButton>
-        <IconButton className={cl.btn} disableRipple onClick={onClickMaximize}>
+        {/* <IconButton className={cl.btn} disableRipple onClick={onClickMaximize}>
           {isMaximized ? ICONS.maximizeRestore : ICONS.maximize }
-        </IconButton>
+        </IconButton> */}
         <IconButton className={cx(cl.btn, 'close')} disableRipple onClick={close}>
           {ICONS.close}
         </IconButton>

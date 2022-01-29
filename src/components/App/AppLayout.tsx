@@ -8,19 +8,21 @@ export const useStyles = makeStyles(theme => ({
   appWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    padding: theme.spacing(0, 0, 2, 0),
     height: '100vh',
-    backgroundColor: theme.palette.bg.main,
+    overflow: 'hidden',
+    backgroundColor: 'black',
   },
   appTop: {
-    flexGrow: 1,
+    // flexGrow: 1,
+    // maxHeight: '70vh',
+    height: '75vh',
     width: '100%',
-    padding: theme.spacing(1, 2, 2, 2),
+    padding: theme.spacing(0, 2, 0, 2),
   },
   appBottom: {
-    padding: theme.spacing(0, 2),
     width: '100%',
+    height: '25vh',
+    padding: theme.spacing(0, 2),
   }
 }))
 
