@@ -4,10 +4,7 @@ import { useAppContext, useGameContext } from 'context'
 
 const useStyles = makeStyles(theme => ({
   news: {
-    // height: '100%',
-    // maxHeight: '100%',
-    // flexGrow: 1,
-    // display: 'flex',
+
   },
   header: {
     fontFamily: 'Nove',

@@ -1,43 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import { Button, makeStyles, Typography } from '@material-ui/core'
-import { ProgressBar } from 'components/ProgressBar'
+import { makeStyles, Typography } from '@material-ui/core'
 import { useGameContext } from 'context'
-import { useGameAPI } from 'hooks'
-import { GameUpdateState } from 'context/game/types'
+import { PlayButton } from './PlayButton'
+import { GameProgressBar } from 'components/ProgressBar/GameProgressBar'
 
 const useStyles = makeStyles(theme => ({
   download: {
     display: 'flex',
     alignItems: 'center',
     height: '100%',
+    paddingBottom: theme.spacing(1),
   },
   progress: {
     fontFamily: 'Nove',
     fontSize: '28px',
     marginRight: theme.spacing(1),
+    textShadow: '3px 3px black',
   },
   progressBar: {
-    height: 15,
     marginRight: theme.spacing(2),
   },
-  playBtn: {
-    marginRight: theme.spacing(4),
-  },
 }))
-
-const LABELS: Record<GameUpdateState, string> = {
-  'Loading': 'Loading...',
-  'Checking': 'Checking for update',
-  'Downloading': 'Downloading update',
-  'Installing': 'Installing update',
-  'Up To Date': 'Ready to play'
-}
 
 type ProgressType = 'None' | 'Download' | 'Install' | 'Complete'
 
 export const Download: React.FC = () => {
   const cl = useStyles()
-  const gameAPI = useGameAPI()
   const { downloadProgress, installProgress, updateState } = useGameContext()
   const [progressType, setProgressType] = useState<ProgressType>('None')
   useEffect(() => {
@@ -58,35 +46,14 @@ export const Download: React.FC = () => {
     Install: installProgress,
     Complete: 1,
   }[progressType]
-  
-  let label = LABELS[updateState]
-  if (progressType === 'Download' || progressType === 'Install') {
-    label += ` ${Math.round(progress * 100)}%`
-  }
-
-  const onClickPlay = () => {
-    gameAPI.startGame()
-  }
 
   return (
     <div className={cl.download}>
       <Typography className={cl.progress} color="textPrimary">
         {Math.round(progress * 100)}%
       </Typography>
-      <ProgressBar value={progress * 100} className={cl.progressBar} />
-      {/* <Typography variant="body1" color="textPrimary">
-        {label}
-      </Typography> */}
-      <Button
-        disableElevation
-        size="large"
-        variant="contained"
-        className={cl.playBtn}
-        disabled={updateState !== 'Up To Date' || installProgress < 1}
-        onClick={onClickPlay}
-      >
-        PLAY
-      </Button>
+      <GameProgressBar value={progress * 100} className={cl.progressBar} />
+      <PlayButton />
     </div>  
   )
 }

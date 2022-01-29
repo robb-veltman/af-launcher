@@ -4,24 +4,26 @@ import { makeStyles } from '@material-ui/core'
 import { MenuBar } from 'components/MenuBar'
 import { Main, Download } from 'components/sections'
 
+//@ts-ignore
+import bgSource from 'assets/images/bg.png'
+
 export const useStyles = makeStyles(theme => ({
   appWrapper: {
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
     overflow: 'hidden',
-    backgroundColor: 'black',
+    backgroundImage: `url(${bgSource})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
   },
   appTop: {
-    // flexGrow: 1,
-    // maxHeight: '70vh',
-    height: '75vh',
+    flexGrow: 1,
     width: '100%',
     padding: theme.spacing(0, 2, 0, 2),
   },
   appBottom: {
     width: '100%',
-    height: '25vh',
     padding: theme.spacing(0, 2),
   }
 }))

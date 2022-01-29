@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Tab, makeStyles, Typography } from '@material-ui/core'
+import { Tab, makeStyles, darken } from '@material-ui/core'
 import { TabContext, TabList, TabPanel } from '@material-ui/lab'
 
 import { NewsTab } from './NewsTab'
@@ -30,8 +30,16 @@ const useStyles = makeStyles(theme => ({
   },
   tabPanel: {
     overflowY: 'scroll',
-    // maxHeight: '50vh',
     height: '50vh',
+
+    '&::-webkit-scrollbar': {
+      background: 'transparent',
+      width: 4,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      // backgroundColor: theme.palette.secondary.main,
+      backgroundColor: 'white',
+    },
   },
 }))
 

@@ -8,11 +8,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface Props extends LinearProgressProps {
-  
-}
+export type ProgressBarProps = LinearProgressProps
 
-export const ProgressBar: React.FC<Props> = ({
+export const ProgressBar: React.FC<ProgressBarProps> = ({
   className,
   value,
   ...rest

@@ -1,5 +1,5 @@
 import React, {  useState } from 'react'
-import { Typography, makeStyles, Grid } from '@material-ui/core'
+import { Typography, makeStyles } from '@material-ui/core'
 
 import { useAppContext, useGameContext } from 'context'
 import { useElectron } from 'hooks'
@@ -8,16 +8,18 @@ import { GridContainer } from 'components/Grid'
 
 const useStyles = makeStyles(theme => ({
   main: {
-    padding: theme.spacing(0, 2, 2, 2),
-    background: theme.palette.primary.main,
-    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    width: '70vw',
+    marginLeft: '5vw',
   },
-
   title: {
+    zIndex: 1,
     fontFamily: 'Nove',
-    fontSize: '20vh',
-    marginBottom: '-20px',
-    marginLeft: '-48px',
+    fontSize: '80px',
+    marginBottom: '-15px',
+    marginLeft: '-40px',
+    textShadow: '5px 5px black',
   },
 }))
 
@@ -37,49 +39,10 @@ export const Main: React.FC = () => {
   const isDev = process.env.NODE_ENV === 'development'
   return (
     <div className={cl.main}>
-      <GridContainer spacing={3} style={{ height: '100%' }}>
-        {/* <Grid item xs={1} /> */}
-        <Grid item xs={8}>
-          <Typography variant="h1" color="textPrimary" className={cl.title}>
-            AFTERSTRIFE
-          </Typography>
-          <MainTabs />
-        </Grid>
-        <Grid item xs={4} />
-      </GridContainer>
-      
-      {/* {isDev && (
-        <>
-          <button onClick={onClickTestBtn}>Test Button</button>
-          <button onClick={() => setN(n + 1)}>Force Render</button>
-        </>
-      )}
-      <button onClick={reinstallGame}>
-        Reinstall
-      </button>
-      <Typography variant="body2" color="textPrimary" className={cl.t1}>
-        App State: {appUpdateState}
+      <Typography variant="h1" color="textPrimary" className={cl.title}>
+        AFTERSTRIFE
       </Typography>
-      <Typography variant="body2" color="textPrimary" className={cl.t2}>
-        App Version: {appVersion}
-      </Typography>
-      <Typography variant="body2" color="textPrimary">
-        App Environment: {process.env.NODE_ENV}
-      </Typography>
-      <br />
-      <Typography variant="body2" color="textPrimary">
-        Game State: {gameUpdateState}
-      </Typography>
-      <Typography variant="body2" color="textPrimary">
-        Game Version: {metadata?.version}
-      </Typography>
-      <br />
-      <Typography variant="body2" color="textPrimary">
-        {metadata?.name}
-      </Typography>
-      <Typography variant="body2" color="textPrimary">
-        © {metadata?.company} 2022
-      </Typography> */}
+      <MainTabs />
     </div>
   );
 }
