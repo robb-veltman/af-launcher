@@ -5,7 +5,7 @@ import {
   mdiWindowMinimize,
   mdiWindowMaximize,
   mdiWindowRestore,
-  mdiWindowClose,
+  mdiCloseThick,
   mdiCog,
 } from '@mdi/js'
 
@@ -33,7 +33,7 @@ export const ICONS = {
   ),
   close: (
     <Icon
-      path={mdiWindowClose}
+      path={mdiCloseThick}
       color="white"
       size={0.8}
     />

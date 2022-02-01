@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import cx from 'classnames'
 import { Button, Typography, makeStyles, IconButton } from '@material-ui/core'
 import { useGameAPI } from 'hooks'
 import { useGameContext } from 'context'
@@ -20,13 +21,18 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '4px 4px black',
     transition: 'all 0.2s ease',
     '&:hover': {
+      color: theme.palette.secondary.main,
       backgroundColor: theme.palette.primary.light,
       boxShadow: '5px 5px black',
       transform: 'translate(-1px, -1px)',
     },
     '&:disabled': {
-      backgroundColor: 'gray',
-      textShadow: 'none',
+      textShadow: `4px 4px ${theme.palette.grey[900]}`,
+      backgroundColor: '#49305D',
+      color: '#BBBBBB',
+    },
+    '&.isPressed': {
+      transform: 'scale(0.97, 0.97)',
     },
   },
   stateLabel: {
@@ -49,9 +55,9 @@ const useStyles = makeStyles(theme => ({
 
 const LABELS: Record<GameUpdateState, string> = {
   'Loading': 'Loading...',
-  'Checking': 'Checking for Update',
-  'Downloading': 'Downloading Update',
-  'Installing': 'Installing Update',
+  'Checking': 'Checking...',
+  'Downloading': 'Downloading...',
+  'Installing': 'Installing...',
   'Up To Date': 'Ready to Play!'
 }
 
@@ -60,15 +66,30 @@ export const PlayButton: React.FC = () => {
   const gameApi = useGameAPI()
   const { updateState, installProgress } = useGameContext()
   const label = LABELS[updateState]
+  const [isPressed, setIsPressed] = useState(false)
+
+  // a temporary disabled state to prevent double-clicks
+  const [isTempDisabled, setIsTempDisabled] = useState(false)
+
+  const onClick = () => {
+    if (!isTempDisabled)
+    setIsTempDisabled(true)
+    setTimeout(() => setIsTempDisabled(false), 2000)
+    gameApi.startGame()
+  }
+
   return (
     <div className={cl.playBtnContainer}>
       <Typography className={cl.stateLabel} variant="body2" color="textPrimary">
         {label}
       </Typography>
       <Button
-        disabled={updateState !== 'Up To Date' || installProgress < 1}
-        onClick={gameApi.startGame}
-        className={cl.playBtn}
+        onMouseDown={() => setIsPressed(true)}
+        onMouseUp={() => setIsPressed(false)}
+        onMouseLeave={() => setIsPressed(false)}
+        onClick={onClick}
+        disabled={updateState !== 'Up To Date' || installProgress < 1 || isTempDisabled}
+        className={cx(cl.playBtn, { isPressed })}
         variant="contained"
         color="primary"
         disableRipple

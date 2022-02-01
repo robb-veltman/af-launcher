@@ -22,7 +22,7 @@ export const theme = createTheme({
   },
   palette: {
     primary: {
-      // light: '#ccc',
+      light: '#DD7CFF',
       main: '#a91efe',
       dark: '#2a0e39',
     },
