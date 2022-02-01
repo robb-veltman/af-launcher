@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Tab, makeStyles, darken } from '@material-ui/core'
+import { Tab, makeStyles } from '@material-ui/core'
 import { TabContext, TabList, TabPanel } from '@material-ui/lab'
 
 import { NewsTab } from './NewsTab'
@@ -7,7 +7,6 @@ import { PatchNotesTab } from './PatchNotesTab'
 
 const useStyles = makeStyles(theme => ({
   tabsContainer: {
-    // backgroundColor: theme.palette.primary.dark,
     background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(42,14,57,1) 100%)',
     borderRadius: '10px',
     '& .indicator': {
@@ -27,9 +26,14 @@ const useStyles = makeStyles(theme => ({
   },
   tab: {
     color: theme.palette.secondary.main,
-    fontFamily: 'InformaPro',
+    fontFamily: 'Nove',
     fontSize: '18px',
     padding: 0,
+    '&[aria-selected="false"]': {
+      color: theme.palette.secondary.dark,
+      // color: '#827138',
+      opacity: 1,
+    },
   },
   tabPanel: {
     padding: theme.spacing(2, 3),
@@ -41,7 +45,6 @@ const useStyles = makeStyles(theme => ({
       width: 4,
     },
     '&::-webkit-scrollbar-thumb': {
-      // backgroundColor: theme.palette.secondary.main,
       backgroundColor: 'white',
     },
   },
