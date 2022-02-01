@@ -3,7 +3,7 @@
   "description": "AF Launcher",
   "author": "Robert Veltman",
   "homepage": "./",
-  "version": "0.1.30",
+  "version": "0.1.31",
   "private": false,
   "license": "MIT",
   "build": {
