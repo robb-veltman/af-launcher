@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { Tab, makeStyles } from '@material-ui/core'
+import { Tab, makeStyles, useTheme } from '@material-ui/core'
 import { TabContext, TabList, TabPanel } from '@material-ui/lab'
 
 import { NewsTab } from './NewsTab'
 import { PatchNotesTab } from './PatchNotesTab'
+
+import { ScrollableContent } from './ScrollableContent'
 
 const useStyles = makeStyles(theme => ({
   tabsContainer: {
@@ -31,22 +33,11 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     '&[aria-selected="false"]': {
       color: theme.palette.secondary.dark,
-      // color: '#827138',
       opacity: 1,
     },
   },
   tabPanel: {
-    padding: theme.spacing(2, 3),
-    overflowY: 'scroll',
-    height: '50vh',
-
-    '&::-webkit-scrollbar': {
-      background: 'transparent',
-      width: 4,
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'white',
-    },
+    padding: theme.spacing(2, 5, 3, 3),
   },
 }))
 
@@ -55,6 +46,7 @@ type TabValue = 'news' | 'patchNotes'
 export const MainTabs: React.FC = () => {
   const cl = useStyles()
   const [tabValue, setTabValue] = useState <TabValue>('news')
+  const theme = useTheme()
   const onTabChange = (_: any, value: TabValue) => {
     setTabValue(value)
   }
@@ -81,12 +73,14 @@ export const MainTabs: React.FC = () => {
             value="patchNotes"
           />
         </TabList>
-        <TabPanel className={cl.tabPanel} value="news">
-          <NewsTab />
-        </TabPanel>
-        <TabPanel className={cl.tabPanel} value="patchNotes">
-          <PatchNotesTab />
-        </TabPanel>
+        <ScrollableContent height="50vh" padding={theme.spacing(2.5, 0.5, 2.5, 0)}>
+          <TabPanel className={cl.tabPanel} value="news">
+              <NewsTab />
+          </TabPanel>
+          <TabPanel className={cl.tabPanel} value="patchNotes">
+            <PatchNotesTab />
+          </TabPanel>
+        </ScrollableContent>
       </TabContext>
     </div>
   )

@@ -18,7 +18,7 @@ import '@material-ui/core/styles'
 
 export const theme = createTheme({
   typography: {
-    fontFamily: ['InformaPro', 'sans-serif'].join(', '),
+    fontFamily: ['InformaPro-Normal', 'sans-serif'].join(', '),
   },
   palette: {
     primary: {

@@ -42,6 +42,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'black',
     position: 'absolute',
     top: '-36px',
+    fontFamily: 'InformaPro-Normal',
   },
   options: {
     display: 'flex',

@@ -4,7 +4,17 @@
 }
 
 @font-face {
-  font-family: "InformaPro";
+  font-family: "InformaPro-Bold";
+  src: url(./assets/fonts/InformaPro-Bold.otf) format('opentype')
+}
+
+@font-face {
+  font-family: "InformaPro-Medium";
+  src: url(./assets/fonts/InformaPro-Medium.otf) format('opentype')
+}
+
+@font-face {
+  font-family: "InformaPro-Normal";
   src: url(./assets/fonts/InformaPro-Normal.otf) format('opentype')
 }
 
