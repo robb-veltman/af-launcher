@@ -28,16 +28,13 @@ function createWindow() {
     width: 800,
     height: 500,
     resizable: false,
-    // minWidth: 600,
-    // minHeight: 375,
     frame: false,
     transparent: true,
     roundedCorners: true,
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false,
-      //enableRemoteModule: true,
+      webSecurity: !isDev,
       contextIsolation: false,
     },
   })
@@ -51,10 +48,6 @@ function createWindow() {
   }
 
   mainWindow.once('ready-to-show', () => {
-    // setTimeout(() => {
-    //   console.log('--------------?')
-    //   win.webContents.send('Test', 'ayo', 'ayo?')
-    // }, 2000)
   })
 
   mainWindow.on('show', () => {
@@ -165,9 +158,14 @@ ipcMain.on('Game.Download.Start', async () => {
       {
         filename,
         directory: PATHS.afterStrifeDir,
+        onStarted: item => {
+        },
         onProgress: ({ percent }) => sendToWindow('Game.Download.Progress', { progress: percent }),
         onCompleted: item => sendToWindow('Game.Download.Complete', { item }),
-        onCancel: item => sendToWindow('Game.Download.Cancel', item)
+        onCancel: item => {
+          log.info('Download was canceled.')
+          sendToWindow('Game.Download.Canceled', item)
+        }
       }
     )
 

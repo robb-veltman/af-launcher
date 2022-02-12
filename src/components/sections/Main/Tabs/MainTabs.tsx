@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import { Tab, makeStyles, useTheme } from '@material-ui/core'
 import { TabContext, TabList, TabPanel } from '@material-ui/lab'
 
+import { ScrollableContent } from 'components/ScrollableContent'
 import { NewsTab } from './NewsTab'
 import { PatchNotesTab } from './PatchNotesTab'
-
-import { ScrollableContent } from './ScrollableContent'
 
 const useStyles = makeStyles(theme => ({
   tabsContainer: {
