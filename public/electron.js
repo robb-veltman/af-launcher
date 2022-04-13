@@ -9,12 +9,11 @@ const isDev = require('electron-is-dev')
 
 const { autoUpdater } = require('electron-updater')
 const { download } = require('electron-dl')
-const fs = require('fs')
-const DecompressZip = require('decompress-zip');
 
 const { PATHS } = require('./_paths')
 
 const log = require('electron-log')
+
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('------------------------------')
@@ -22,6 +21,21 @@ log.info('App starting...')
 log.info('------------------------------')
 
 let mainWindow
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+}
+
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -159,12 +173,13 @@ ipcMain.on('Game.Download.Start', async () => {
         filename,
         directory: PATHS.afterStrifeDir,
         onStarted: item => {
+          //setTimeout(() => item.cancel(), 1000)
         },
         onProgress: ({ percent }) => sendToWindow('Game.Download.Progress', { progress: percent }),
         onCompleted: item => sendToWindow('Game.Download.Complete', { item }),
         onCancel: item => {
           log.info('Download was canceled.')
-          sendToWindow('Game.Download.Canceled', item)
+          // sendToWindow('Game.Download.Canceled', item)
         }
       }
     )
